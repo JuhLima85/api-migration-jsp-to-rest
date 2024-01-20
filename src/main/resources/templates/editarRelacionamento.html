@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<header th:replace="layout/template :: header"></header>
+
+	<div class="custom-container mt-4 mb-4">		
+		<h1 class="text-center mb-5"
+			style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
+			EDITAR RELACIONAMENTO</h1>
+		<div class="form">
+			<form id="editarRelacionamentoForm" method="post"
+				th:action="@{/atualizarRelacionamento}"
+				th:object="${relacionamento}">
+				<div>
+					<label for="pessoa2Nome">Nome do Familiar</label> <input
+						type="text" name="pessoa2.nome" id="pessoa2Nome"
+						class="form-control" readonly
+						th:value="${relacionamento.pessoa2.nome}"> <input
+						type="hidden" name="id" th:value="${relacionamento.id}">
+				</div>				
+				<br>
+				<div>
+					<label>Editar Grau de Parentesco</label> <select name="parentesco"
+						id="parentesco" class="form-control">
+						<option value="">Selecione o grau de parentesco</option>
+						<option value="1">Pai</option>
+						<option value="2">Mãe</option>
+						<option value="3">Cônjuge</option>
+						<option value="4">Filho(a)</option>
+						<option value="5">Avô(a)</option>
+						<option value="6">Neto(a)</option>
+						<option value="7">Bisavô(a)</option>
+						<option value="8">Bisneto(a)</option>
+						<option value="9">Irmão(a)</option>
+						<option value="10">Tio(a)</option>
+						<option value="11">Sobrinho(a)</option>
+						<option value="12">Primo(a)</option>
+						<option value="13">Cunhado(a)</option>
+						<option value="14">Genro/Nora</option>
+						<option value="15">Padrasto(a)</option>
+						<option value="16">Enteado(a)</option>
+						<option value="17">Sogro(a)</option>
+						<option value="18">Companheiro(a)</option>
+						<option value="19">Noivo(a)</option>
+					</select>
+				</div>
+				<input type="hidden" name="valorParentesco" id="valorParentesco" />
+				<br>
+				<button type="submit" class="btn btn-success">Atualizar</button>
+			</form>
+		</div>
+
+		<div class="text-center mt-5 mb-5">
+			<div th:if="${not #strings.isEmpty(mensagem)}"
+				class="alert alert-success" role="alert" th:text="${mensagem}"></div>
+			<div th:if="${not #strings.isEmpty(mensagem_error)}"
+				class="alert alert-danger" role="alert" th:text="${mensagem_error}"></div>
+		</div>
+	</div>
+</body>
+<script>	
+	document.getElementById('parentesco').addEventListener('change',
+			function() {
+				document.getElementById('valorParentesco').value = this.value;
+			});
+</script>
+<style>
+.custom-container {
+	width: 90%; 
+	margin: 0 auto; 
+}
+</style>
+<footer th:replace="layout/template :: footer"></footer>
+</html>

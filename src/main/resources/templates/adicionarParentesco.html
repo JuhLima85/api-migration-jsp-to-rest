@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <header th:replace="layout/template :: header"></header>  
+	<div class="custom-container mt-1 mb-4">		
+		<div class="text-center mt-5 mb-5">
+			<div th:if="${not #strings.isEmpty(mensagem)}"
+				class="alert alert-success" role="alert" th:text="${mensagem}"></div>
+			<div th:if="${not #strings.isEmpty(mensagem_error)}"
+				class="alert alert-danger" role="alert" th:text="${mensagem_error}"></div>
+		</div>
+					
+      <div class="text-center mb-5" th:if="${not #strings.isEmpty(NomePessoa1)}"
+    	style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0px; color: #343A40; font-family: 'Arial', sans-serif;">
+    	<p th:text="${NomePessoa1}" style="font-size: 2em;"></p>
+	</div>
+			
+		<div class="form">
+			<form id="adicionarParentescoForm" method="post">
+				<div>
+					<label for="selectPessoa">Nome do Familiar</label> <select
+						name="selectPessoa" id="selectPessoa" class="form-control">
+						<option value="">Selecione</option>
+						<option th:each="pessoa : ${selectPessoa}"
+							th:value="${pessoa.id_c}" th:text="${pessoa.nome}"></option>
+					</select>
+				</div>
+				<div>
+					<label>Grau de parentesco</label> <select name="parentesco"
+						id="parentesco" class="form-control">
+						<option value="">Selecione o grau de parentesco</option>
+						<option value="1">Pai</option>
+						<option value="2">Mãe</option>
+						<option value="3">Cônjuge</option>
+						<option value="4">Filho(a)</option>
+						<option value="5">Avô(a)</option>
+						<option value="6">Neto(a)</option>
+						<option value="7">Bisavô(a)</option>
+						<option value="8">Bisneto(a)</option>
+						<option value="9">Irmão(a)</option>
+						<option value="10">Tio(a)</option>
+						<option value="11">Sobrinho(a)</option>
+						<option value="12">Primo(a)</option>
+						<option value="13">Cunhado(a)</option>
+						<option value="14">Genro/Nora</option>
+						<option value="15">Padrasto(a)</option>
+						<option value="16">Enteado(a)</option>
+						<option value="17">Sogro(a)</option>
+						<option value="18">Companheiro(a)</option>
+						<option value="19">Noivo(a)</option>
+					</select>
+				</div>
+				<br> <input type="button" value="Adicionar"
+					class="btn btn-success" id="botaoAdicionar">
+			</form>
+		</div>		
+		
+		<div class="table mt-5">
+			<table class="tabelaRelacionamento" style="width: 100%;" border="1">
+				<thead>
+					<tr>
+						<th>NOME DO FAMILIAR</th>
+						<th>PARENTESCO</th>						
+					</tr>
+				</thead>
+				<tbody>
+				<tr th:each="relacionamento : ${relacionamentos}">
+                                        
+                </tr>
+					<tr th:if="${#lists.isEmpty(relacionamentos)}">
+						<td colspan="2">Nenhum registro encontrados</td>
+					</tr>							
+				</tbody>
+			</table>        
+	</div>	
+	
+<div class="mensagem-error" th:if="${not #strings.isEmpty(mensagemError)}">
+    <p th:text="${mensagemError}"></p>
+</div>
+	</div>	
+	<script>
+		$(document).ready(function() {
+			$("#botaoAdicionar").click(function() {
+				$.ajax({
+					type : "POST",
+					url : "/{idPessoa1}/relacionar/{idPessoa2}",
+					data : $("#adicionarParentescoForm").serialize(),
+					success : function(data) {						
+						$(".tabelaRelacionamento tbody").html(data);
+					},
+					error : function(xhr, status, error) {						
+					}
+				});
+			});
+		});
+	</script>
+	<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</body>
+<style>
+.custom-container {
+	width: 90%; 
+	margin: 0 auto; 
+}
+
+.tabelaRelacionamento {
+	border-collapse: collapse;
+}
+
+.tabelaRelacionamento th, .tabelaRelacionamento td {
+	border: 1px solid black;
+	padding: 8px;
+}
+</style>
+<footer th:replace="layout/template :: footer"></footer>
+</html>

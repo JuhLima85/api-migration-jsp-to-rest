@@ -1,0 +1,28 @@
+version: '3'
+services:
+  Devsibre:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: devsibre
+    ports:
+        - '8080:8080'
+        - '5005:5005'
+        
+    environment:
+      - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
+      - PROFILE=dev
+    links:
+      - db
+  db:
+    image: mysql:5.6
+    ports:
+      - '3306:3306'
+          
+    environment:
+      - MYSQL_ROOT_HOT=%
+      - MYSQL_DATABASE=devsibre      
+      - MYSQL_ROOT_PASSWORD=root
+          
+    volumes:
+      - ./docker/volume_mysql:/var/lib/mysql

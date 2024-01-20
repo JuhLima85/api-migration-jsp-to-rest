@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<header th:replace="layout/template :: header"></header>
+
+	<div class="custom-container mt-4">
+		<h1 class="text-center mb-5"
+			style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
+			EDITAR CADASTRO</h1>
+
+		<div class="text-center mt-5 mb-5">
+			<div th:if="${not #strings.isEmpty(mensagem)}"
+				class="alert alert-success" role="alert" th:text="${mensagem}"></div>
+			<div th:if="${not #strings.isEmpty(mensagem_error)}"
+				class="alert alert-danger" role="alert" th:text="${mensagem_error}"></div>
+		</div>
+
+		<form action="/editsave" method="post">
+			<div hidden>
+				<label>ID</label> <input type="hidden" name="id_c" id="id_c"
+					th:value="${cad.id_c}" />
+			</div>
+			<!-- Campo do id ocultado para o usuário -->
+			<label>NOME</label> <input type="text" name="nome" id="nome"
+				class="form-control" th:value="${cad.nome}"> <label>QUADRA</label>
+			<input type="text" name="logradouro" id="logradouro"
+				class="form-control" th:value="${cad.logradouro}"> <label>BAIRRO</label>
+			<input type="text" name="bairro" id="bairro" class="form-control"
+				th:value="${cad.bairro}"> <label>CIDADE</label> <input
+				type="text" name="localidade" id="localidade" class="form-control"
+				th:value="${cad.localidade}"> <label>ESTADO</label> <input
+				type="text" name="uf" id="uf" class="form-control"
+				th:value="${cad.uf}"> <label>CEP</label> <input type="text"
+				name="cep" id="cep" class="form-control" th:value="${cad.cep}">
+			<label>Telefone</label> <input type="text" name="fone" id="fone"
+				class="form-control" th:value="${cad.fone}"> <label>Email</label>
+			<input type="email" name="email" id="email" class="form-control"
+				th:value="${cad.email}"> <label>Data-nascmt</label> <input
+				type="date" name="data" id="data" class="form-control"
+				th:value="${cad.data}"> <label>Membro?</label> <select
+				name="membro" id="membro" class="form-control">
+				<option value="true" th:selected="${cad.membro == true}">Sim</option>
+				<option value="false" th:selected="${cad.membro == false}">Não</option>
+			</select></br>
+			<div class="botao-group">
+				<input type="submit" value="Salvar" class="botao verde">
+			</div>
+			</br> </br> </br> </br>
+		</form>
+	</div>
+
+	<br />
+	<br />
+	<br />
+	<br />
+</body>
+<style>
+.custom-container {
+	width: 90%; /* Ajuste o valor conforme necessário */
+	margin: 0 auto; /* Centraliza a div na página */
+}
+
+.botao-group {
+	display: flex;
+	flex-direction: row; /* Alinhe os botões horizontalmente */
+}
+
+.botao {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-weight: bold;
+	margin-right: 10px;
+	/* Adicione uma margem à direita para separar os botões */
+	border: none; /* Remover a borda */
+}
+
+.verde {
+	background-color: #218838;
+	color: white;
+}
+</style>
+<footer th:replace="layout/template :: footer"></footer>
+</html>
+

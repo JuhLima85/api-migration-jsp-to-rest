@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+<title>Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<header th:replace="layout/template :: header"></header>
+	<div class="image-container text-center mb-5">
+		<img src="/images/logo.png" alt="Logo SIBRE" />
+	</div>
+	<div class="custom-container mt-5">
+		<div class="text-center">
+			<h3>A Deus toda honra e toda a glória!!!</h3>
+			<h4 class="mt-4">
+				<a href=/agendas_User>Ministérios</a>
+			</h4>
+		</div>
+	</div>
+</body>
+<style>
+.custom-container {
+	width: 90%; /* Ajuste o valor conforme necessário */
+	margin: 0 auto; /* Centraliza a div na página */
+}
+
+.image-container {
+	background: linear-gradient(to bottom right, #ffffff, #4452DE);
+	/* Degradê branco para #4452DE */
+	display: inline-block;
+	/* Permite que o contêiner se ajuste ao tamanho da imagem */
+	width: 100%;
+}
+
+.image-container img {
+	max-width: 100%;
+	max-height: 100%;
+	border-radius: 10px; /* Adiciona uma borda arredondada à imagem */
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+	/* Adiciona uma sombra à imagem */
+}
+</style>
+<footer th:replace="layout/template :: footer"></footer>
+</html>
+
+

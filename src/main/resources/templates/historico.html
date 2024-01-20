@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+<title>TODO supply a title</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+	<header th:replace="layout/template :: header"></header>
+	<div class="custom-container mt-4">
+		<h1 class="text-center mb-5"
+			style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
+			HISTÓRICO</h1>
+		<div class="card mb-3">
+			<div class="card-body">
+				
+				<p th:if="${cadastro != null and cadastro.pessoaMembro}"
+					style="float: right;">
+					<span class="membro-retangulo verde-claro">Membro Deste
+						01/01/1991</span>
+				</p>				
+				<p th:unless="${cadastro != null and cadastro.pessoaMembro}"
+					style="float: right;">
+					<span class="membro-retangulo vermelho-claro">Não Membro</span>
+				</p>
+				<h4 class="mb-4">DADOS PESSOAIS</h4>
+				<h5 class="card-title"
+					th:if="${cadastro != null and cadastro.pessoaNome != null}"
+					th:text="'Nome: ' + ${cadastro.pessoaNome}"></h5>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.idPessoa != null}"
+					th:text="'idPessoa: ' + ${cadastro.idPessoa}"></p>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.pessoaLogradouro != null}"
+					th:text="'Quadra: ' + ${cadastro.pessoaLogradouro}"></p>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.pessoaBairro != null}"
+					th:text="'Bairro: ' + ${cadastro.pessoaBairro}"></p>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.pessoaFone != null}"
+					th:text="'Telefone: ' + ${cadastro.pessoaFone}"></p>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.pessoaEmail != null}"
+					th:text="'Email: ' + ${cadastro.pessoaEmail}"></p>
+				<p class="card-text"
+					th:if="${cadastro != null and cadastro.pessoaData != null}"
+					th:text="'Data de Nascimento: ' + ${cadastro.pessoaData}"></p>
+				<div class="botao-group">
+					<p>
+						<a th:if="${cadastro != null and cadastro.idPessoa != null}"
+							th:href="@{/edite/} + ${cadastro.idPessoa}" class="botao azul">Editar</a>
+					</p>
+					<th:block
+						th:if="${relacionamentos != null and not #lists.isEmpty(relacionamentos)}">
+						<p>
+							<a
+								th:href="@{/deletar/{idPessoa}(idPessoa=${cadastro.idPessoa}, idRelacionamento=${relacionamentos[0].id})}"
+								class="botao vermelho">Apagar</a>
+						</p>
+					</th:block>
+
+					<th:block
+						th:if="${relacionamentos == null or #lists.isEmpty(relacionamentos)}">
+						<p>
+							<a
+								th:href="@{/deletar/{idPessoa}(idPessoa=${cadastro.idPessoa})}"
+								class="botao vermelho">Apagar</a>
+						</p>
+					</th:block>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="custom-container mt-5 mb-4">
+		<div class="table-container">
+			<h4 class="mb-4">FAMILIARES</h4>
+			<table class="table tabelaRelacionamento" style="width: 100%;">
+				<thead>
+					<tr>
+						<th>NOME</th>
+						<th>PARENTESCO</th>
+						<th>EDITAR</th>
+						<th>APAGAR</th>
+					</tr>
+				</thead>
+				<tbody>					
+					<tr th:each="rela : ${relacionamentos}" class="table-row">
+						<td th:text="${rela.nomeFamiliar}"></td>
+						<td th:text="${rela.grauParentesco}"></td>
+						<td>
+							<div class="botao-group">
+								<a th:if="${rela.id != null}"
+									th:href="@{/editeRelacionamento/} + ${rela.id}"
+									class="botao azul">Editar</a> <a th:if="${rela.id != null}"
+									th:href="@{/deletarRelacionamento/} + ${rela.id} + '?idPessoa=' + ${cadastro.idPessoa}"
+									class="botao vermelho">Apagar</a>
+							</div>
+						</td>
+					</tr>
+					<tr th:if="${#lists.isEmpty(relacionamentos)}">
+						<td colspan="3">Nenhum registro encontrado</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="botao-group mb-4">			
+			<a th:if="${cadastro != null}"
+				th:href="@{/formulario?acao=adicionarParentesco}"
+				class="botao verde">Adicionar Parentesco</a>
+		</div>
+	</div>
+	<br />
+	<br />
+	<br />
+	<br />
+</body>
+
+<style>
+.custom-container {
+	width: 90%; 
+	margin: 0 auto; 
+}
+
+.membro-info {
+	float: right;
+	margin-left: 10px;
+	
+}
+
+.botao-group {
+	display: flex;
+	flex-direction: row; 
+}
+
+.botao {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-weight: bold;
+	margin-right: 10px;
+	
+}
+
+.azul {
+	background-color: #138496;
+	color: white;
+}
+
+.vermelho {
+	background-color: red;
+	color: white;
+}
+
+.verde {
+	background-color: #218838;
+	color: white;
+}
+
+.verde-claro {
+	background-color: #b3ffb3;
+}
+
+.vermelho-claro {
+	background-color: #FF0000;
+	color: #FFFFFF;
+}
+
+.membro-retangulo {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-weight: bold;
+	margin: 5px; 
+}
+</style>
+<footer th:replace="layout/template :: footer"></footer>
+</html>

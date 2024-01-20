@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="layout/template :: head">    
+        <title>Cantina</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+         <header th:replace="layout/template :: header"></header>
+        <h4>A Deus toda honra e toda a gloria!!!</h4>
+        <div class="container mt-4">
+        <table class="table">
+            <thead>
+                <tr>                        
+                    <th>NOME</th>
+                    <th>DESCRICÃO</th> 
+                    <th>DATA</th>                   
+                    <th>DELETE</th>
+                </tr>
+            </thead>
+            <tbody>               
+                <tr th:each="pg:${pagos}">
+                    <td th:text="${pg.nome}"></td>
+                    <td th:text="${pg.descricao}"></td>                   
+                    <td th:text="${pg.data}"></td>             
+                    <td><a th:href="@{/apagaDebito/}+${pg.id_n}"class="btn btn-danger">Apagar</a></td>                    
+                </tr>
+            </tbody>
+        </table> 
+        </div>
+    </body>
+     <footer th:replace="layout/template :: footer"></footer>
+</html>

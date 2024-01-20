@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/template :: head">
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <header th:replace="layout/template :: header"></header>  
+    <div class="custom-container mt-4 mb-4">       
+        
+        <div class="text-center mt-1 mb-2">
+			<div th:if="${not #strings.isEmpty(mensagem)}"
+				class="alert alert-success" role="alert" th:text="${mensagem}"></div>
+			<div th:if="${not #strings.isEmpty(mensagem_error)}"
+				class="alert alert-danger" role="alert" th:text="${mensagem_error}"></div>
+		</div>        
+
+        <div id="formulario-container" th:if="${#strings.isEmpty(mensagem)}">
+            <h1 class="text-center mb-5"
+			style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
+			FICHA DE CADASTRO</h1>
+            <form id="formCadastro" action="salvar" method="post">
+                <!-- <input type="hidden" name="id_c" id="id_c"> -->
+                <label>Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control">
+                <label>Telefone</label>
+                <input type="text" name="fone" id="fone" class="form-control">
+                <label>Email</label>
+                <input type="email" name="email" id="email" class="form-control">
+                <label>Data-nascmt</label>
+                <input type="date" name="data" id="data" class="form-control">
+                <label>Membro ?</label>
+                <select name="membro" id="membro" class="form-control">
+                    <option value="true" th:selected="${formularioModel.membro}">Sim</option>
+                    <option value="false" th:selected="${!formularioModel.membro}">Não</option>
+                </select>
+                <div class="form-group">
+                    <label for="cep">Cep</label>
+                    <input type="text" name="cep" class="form-control" maxlength="9" id="cep" placeholder="00000-000">
+                </div>
+                <div class="form-group">
+                    <label for="logradouro">Logradouro</label>
+                    <input type="text" name="logradouro" class="form-control" id="logradouro" placeholder="Quadra ou rua">
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" name="bairro" class="form-control" id="bairro">
+                </div>
+                <div class="form-group">
+                    <label for="localidade">Cidade</label>
+                    <input type="text" name="localidade" class="form-control" id="localidade">
+                </div>
+                <div class="form-group">
+                    <label for="uf">UF</label>
+                    <input type="text" name="uf" class="form-control" id="uf">
+                </div>
+                <br>
+                <input type="submit" value="Salvar" class="btn btn-success">
+            </form>
+            <br><br><br><br>
+        </div>		
+        <!-- Botão "Adicionar Familiar" oculto por padrão e só será mostrado quando o formulário for salvo -->
+        <a th:if="${not #strings.isEmpty(mensagem)}" th:href="@{/formulario?acao=adicionarParentesco}" class="btn btn-primary">Adicionar Parentesco</a>
+   
+    </div>
+
+    <script>
+        const cep = document.querySelector("#cep")
+
+        const showData = (result) => {
+            for (const campo in result) {
+                if (document.querySelector("#" + campo)) {
+                    document.querySelector("#" + campo).value = result[campo]
+                }
+            }
+        }
+        cep.addEventListener("blur", (e) => {
+            let search = cep.value.replace("-", "")
+            const options = {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'default'
+            }
+
+            fetch(`https://viacep.com.br/ws/${search}/json/`, options)
+                .then(response => {
+                    response.json()
+                        .then(data => showData(data))
+                })
+                .catch(e => console.log('Deu Erro: ' + e, message))
+        })
+    </script>   
+</body>
+<style>
+.custom-container {
+	width: 90%; /* Ajuste o valor conforme necessário */
+	margin: 0 auto; /* Centraliza a div na página */
+}
+</style>
+ <footer th:replace="layout/template :: footer"></footer>
+
+</html>

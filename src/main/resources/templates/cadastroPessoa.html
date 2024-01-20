@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">  
+
+    <head th:replace="layout/template :: head"> 
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+       <header th:replace="layout/template :: header"></header>        
+        <div class="container">
+            <h1>Ficha de Cadastro</h1>
+            <form action="adicionar" method="post">
+                <label>Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control" required="">
+                <label>Telefone</label>
+                <input type="number" name="fone" id="fone" class="form-control" required="">
+                <label>Email</label>
+                <input type="email" name="email" id="email" class="form-control" required="">
+                <label>Data de nascimento</label>
+                <input type="date" name="data" id="data" class="form-control">
+                <label>É membro?</label>
+                <select name="status" id="status" class="form-control" required="">
+   			 		<option value="sim">Sim</option>
+    				<option value="nao">Não</option>
+				</select>
+                <label>É batizado(a)?</label>
+				<select name="batizado" id="batizado" class="form-control" required="">
+   			 		<option value="sim">Sim</option>
+    				<option value="nao">Não</option>
+				</select>
+                <div class="form-group">
+                    <label for="cep">Cep</label>
+                    <input type="text" name="cep" class="form-control" maxlength="9" id="cep">
+                    <small>00000-000</small>
+                </div>
+                <div class="form-group">
+                    <label for="logradouro">Logradouro</label>
+                    <input type="text" name="logradouro" class="form-control" id="logradouro">
+                    <small>Quadra ou rua</small>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" name="bairro" class="form-control" id="bairro">
+                    <small>bairro</small>
+                </div>
+                <div class="form-group">
+                    <label for="localidade">Localidade</label>
+                    <input type="text" name="localidade" class="form-control" id="localidade">
+                    <small>Cidade</small>
+                </div>
+                <div class="form-group">
+                    <label for="uf">UF</label>
+                    <input type="text" name="uf" class="form-control" id="uf">
+                    <small>Estado</small>
+                </div>                
+                <input type="submit" value="Salvar">
+                <button type="submit" formaction="/pessoas/cadastroParente">Adicionar parentesco</button>
+            </form>            
+          
+        </div>
+        <script>
+            const cep = document.querySelector("#cep")
+
+const showData = (result)=>{
+    for(const campo in result){
+        if(document.querySelector("#"+campo)){
+            document.querySelector("#"+campo).value = result[campo]
+        }
+    }
+}
+cep.addEventListener("blur",(e)=>{
+    let search = cep.value.replace("-","")
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default'
+    }
+
+    fetch(`https://viacep.com.br/ws/${search}/json/`, options)
+    .then(response =>{ response.json()
+        .then( data => showData(data))
+    })
+    .catch(e => console.log('Deu Erro: '+ e,message))
+}) 
+        </script>
+        
+        <script type="text/javascript" th:src="@{/js/jquery-3.4.1.min}"/>
+        <script type="text/javascript" th:src="@{/js/popper.min}"/> 
+        <script type="text/javascript" th:src="@{/js/bootstrap.min}"/> 
+    </body>
+</html>
