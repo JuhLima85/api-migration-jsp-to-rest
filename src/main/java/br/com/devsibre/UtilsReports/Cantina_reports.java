@@ -25,14 +25,14 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import br.com.devsibre.Model.CantinaModel;
-import br.com.devsibre.ServiceImpl.CantinaServiceImpl;
+import br.com.devsibre.UtilsReports.Cantina;
+import br.com.devsibre.Service.CantinaServiceImpl;
 
 @Service
 public class Cantina_reports implements Cantina_Report_Service{
 
 	@Override
-	public boolean creatPdf2(List<CantinaModel> cant, ServletContext context, HttpServletRequest request,
+	public boolean creatPdf2(List<Cantina> cant, ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		Document document = new Document(PageSize.A4, 15, 15, 45, 30);
 
@@ -94,7 +94,7 @@ public class Cantina_reports implements Cantina_Report_Service{
             data.setExtraParagraphSpace(5f);
             table.addCell(data);
 
-            for (CantinaModel cantina : cant) {
+            for (Cantina cantina : cant) {
                 PdfPCell nomeValue = new PdfPCell(new Paragraph(cantina.getNome(), tableBody));
                 nomeValue.setBorderColor(BaseColor.BLACK);
                 nomeValue.setPaddingLeft(10);
@@ -138,7 +138,7 @@ public class Cantina_reports implements Cantina_Report_Service{
 	}
 
 	@Override
-	public boolean createExcel2(List<CantinaModel> cant, ServletContext context, HttpServletRequest request,
+	public boolean createExcel2(List<Cantina> cant, ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		return false;

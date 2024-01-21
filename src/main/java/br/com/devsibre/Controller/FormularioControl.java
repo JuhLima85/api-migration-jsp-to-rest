@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.devsibre.Domain.Entity.Formulario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +28,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.devsibre.Dtos.CadastroDTO;
-import br.com.devsibre.Dtos.RelacionamentoDTO;
-import br.com.devsibre.Model.FormularioModel;
-import br.com.devsibre.Model.GrauDeParentesco;
-import br.com.devsibre.Model.Relacionamento;
-import br.com.devsibre.ServiceImpl.FormularioServiceImpl;
-import br.com.devsibre.ServiceImpl.RelacionamentoServiceImpl;
+import br.com.devsibre.Domain.Entity.DTO.CadastroDTO;
+import br.com.devsibre.Domain.Entity.DTO.RelacionamentoDTO;
+
+import br.com.devsibre.Domain.Entity.GrauDeParentesco;
+import br.com.devsibre.Domain.Entity.Relacionamento;
+import br.com.devsibre.Service.FormularioServiceImpl;
+import br.com.devsibre.Service.RelacionamentoServiceImpl;
 import br.com.devsibre.UtilsReports.Formulario_Report;
-import br.com.devsibre.Dtos.SaveOrUpdateResponse;
+import br.com.devsibre.Domain.Entity.DTO.SaveOrUpdateResponse;
 
 @Controller
 public class FormularioControl {
@@ -52,15 +53,15 @@ public class FormularioControl {
 	@Autowired
 	private RelacionamentoServiceImpl relacionamentoServiceImpl;
 
-	FormularioModel valoresTemporarios = new FormularioModel();
+	Formulario valoresTemporarios = new Formulario();
 
 	// Método para abrir novo formulário
 	@RequestMapping(method = RequestMethod.GET, value = "/formulario")
 	public ModelAndView novoCadastro(@RequestParam(value = "acao", required = false) String acao) {
 		ModelAndView v = new ModelAndView();
-		List<FormularioModel> retorno = service.listAll();
+		List<Formulario> retorno = service.listAll();
 		v.addObject("selectPessoa", retorno);
-		v.addObject(new FormularioModel());
+		v.addObject(new Formulario());
 
 		if (acao != null && acao.equals("adicionarParentesco")) {			
 			v.addObject("NomePessoa1", valoresTemporarios.getNome());
@@ -72,12 +73,12 @@ public class FormularioControl {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/salvar")
-	public String salvar(FormularioModel cadastro, RedirectAttributes attributes) {
+	public String salvar(Formulario cadastro, RedirectAttributes attributes) {
 		SaveOrUpdateResponse response = service.saveOrUpdate(cadastro);
 
 	    // Salvo o id e nome da pessoa1 temporariamente - usado em novoCadastro e vincularParente
-	    valoresTemporarios.setId_c(response.getFormularioModel().getId_c());
-	    valoresTemporarios.setNome(response.getFormularioModel().getNome());
+	    valoresTemporarios.setId_c(response.getFormulario().getId_c());
+	    valoresTemporarios.setNome(response.getFormulario().getNome());
 
 	    if (!response.isNewCadastro()) {
 	        // Se isNewCadastro for falso, significa que o cadastro já existia
@@ -95,8 +96,8 @@ public class FormularioControl {
 	@RequestMapping(method = RequestMethod.POST, value = "/{idPessoa1}/relacionar/{idPessoa2}")
 	public ResponseEntity<String> vincularParente(@RequestParam("selectPessoa") String idpessoa2,
 	        @RequestParam("parentesco") int grauparentesco, Model model) {
-	    FormularioModel pessoa1 = service.getId(valoresTemporarios.getId_c());
-	    FormularioModel pessoa2 = service.getId(Long.parseLong(idpessoa2));
+	    Formulario pessoa1 = service.getId(valoresTemporarios.getId_c());
+	    Formulario pessoa2 = service.getId(Long.parseLong(idpessoa2));
 	    GrauDeParentesco grau = service.buscarGrauDeParentescoPorGrau(grauparentesco, null);	  
 	    List<Relacionamento> relacionamentos = null;
 
@@ -165,7 +166,7 @@ public class FormularioControl {
 	@GetMapping("/listarcadastro")
 	public ModelAndView lista(@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "membroFilter", defaultValue = "todos") String membroFilter) {
-		List<FormularioModel> retorno = new ArrayList<>();
+		List<Formulario> retorno = new ArrayList<>();
 		ModelAndView model = new ModelAndView("listaCadastro.html");
 
 		if ("membros".equals(membroFilter)) {
@@ -224,7 +225,7 @@ public class FormularioControl {
 	// Metodo para abrir formulario de edição de cadastro
 	@GetMapping("/edite/{idPessoa}")
 	public String editar(@PathVariable long idPessoa, Model m) {
-		FormularioModel cad = service.getId(idPessoa);
+		Formulario cad = service.getId(idPessoa);
 		m.addAttribute("cad", cad);		
 		return "edita_Cadastro";
 	}
@@ -237,7 +238,7 @@ public class FormularioControl {
 	        rela.getPessoa2().setNome(rela.getPessoa1().getNome());			
 		}
 				
-		List<FormularioModel> retorno = service.listAll();
+		List<Formulario> retorno = service.listAll();
 		model.addAttribute("selectPessoa", retorno);
 		model.addAttribute("relacionamento", rela);
 		model.addAttribute("NomePessoa1", valoresTemporarios.getNome());
@@ -245,7 +246,7 @@ public class FormularioControl {
 	}
 
 	@RequestMapping(value = "/editsave", method = RequestMethod.POST)
-	public String editsave(@ModelAttribute("cad") FormularioModel emp, Model model) {
+	public String editsave(@ModelAttribute("cad") Formulario emp, Model model) {
 
 		try {
 			boolean idd = service.alterar(emp);
@@ -259,7 +260,7 @@ public class FormularioControl {
 
 	@GetMapping(value = "/pdf")
 	public void createPdf(HttpServletRequest request, HttpServletResponse response) {
-		List<FormularioModel> cad = service.listAll();
+		List<Formulario> cad = service.listAll();
 		boolean isFlag = cadreport.creatPdf(cad, context, request, response);
 		if (isFlag) {
 			String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cad" + ".pdf");
@@ -269,7 +270,7 @@ public class FormularioControl {
 
 	@GetMapping(value = "/Exls")
 	public void createExcel(HttpServletRequest request, HttpServletResponse response) {
-		List<FormularioModel> cad = service.listAll();
+		List<Formulario> cad = service.listAll();
 		boolean isFlag = cadreport.createExcel(cad, context, request, response);
 //        if (isFlag) {
 //            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cad" + ".pdf");

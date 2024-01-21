@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.devsibre.Dtos.FamiliaDTO;
-import br.com.devsibre.ServiceImpl.FamiliaServiceImpl;
+import br.com.devsibre.Domain.Entity.DTO.FamiliaDTO;
+import br.com.devsibre.Service.FamiliaServiceImpl;
 
 @RestController
 @RequestMapping("/familia")

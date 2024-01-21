@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.devsibre.UtilsReports.Cantina;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.devsibre.Model.CantinaModel;
-import br.com.devsibre.ServiceImpl.CantinaServiceImpl;
+import br.com.devsibre.Service.CantinaServiceImpl;
 import br.com.devsibre.UtilsReports.Cantina_reports;
 
 @Controller
@@ -40,7 +40,7 @@ public class CantinaControl {
 	    @RequestMapping(method = RequestMethod.GET, value="/listacantina")
 	    public ModelAndView listarCantina(){
 	      ModelAndView v = new ModelAndView("lista_cantina.html");
-	      List<CantinaModel> cantina = new ArrayList<>();
+	      List<Cantina> cantina = new ArrayList<>();
 	      cantina = cadService.listAll();
 	      v.addObject("cantina", cantina);
 	        return v;  
@@ -50,14 +50,14 @@ public class CantinaControl {
 	    @RequestMapping(method = RequestMethod.GET, value = "/novo_debito")
 	    public ModelAndView novoCadastro() {
 	        ModelAndView v = new ModelAndView("fiado_cantina.html");
-	        v.addObject(new CantinaModel());
+	        v.addObject(new Cantina());
 	        v.setViewName("fiado_cantina");
 	        return v;
 	    }
 
 	    //Metodo para salvar debitos
 	    @RequestMapping(method = RequestMethod.POST, value = "/salvar_debito")
-	    public String salvar(CantinaModel c) {
+	    public String salvar(Cantina c) {
 	        cadService.saveOrUpdate(c);
 	        return "redirect:/novo_debito";
 	    }
@@ -65,14 +65,14 @@ public class CantinaControl {
 	    //Metodo para alterar débitos  
 	    @GetMapping("/editeDebito/{id_n}")
 	    public String editar(@PathVariable long id_n, Model m) {
-	        CantinaModel cant = cadService.getId(id_n);
+	        Cantina cant = cadService.getId(id_n);
 	        m.addAttribute("cant", cant);
 	        return "editarDebitos";
 	    }
 
 	    //Metodo para alterar débitos
 	    @RequestMapping(value = "/editsaveCantina", method = RequestMethod.POST)
-	    public ModelAndView editsaveCantina(@ModelAttribute("cant") CantinaModel emp) {
+	    public ModelAndView editsaveCantina(@ModelAttribute("cant") Cantina emp) {
 	        boolean idd = Boolean.getBoolean("id_n");
 	        idd = cadService.alterar(emp);
 	        return new ModelAndView("redirect:/listacantina");
@@ -89,7 +89,7 @@ public class CantinaControl {
 	    @RequestMapping(method = RequestMethod.GET, value="/lista_pagos")
 	    public ModelAndView listarPagos(){
 	      ModelAndView v = new ModelAndView("lista_pagos.html");
-	      List<CantinaModel> pagos = new ArrayList<>();
+	      List<Cantina> pagos = new ArrayList<>();
 	      pagos = cadService.listAll();
 	      v.addObject("pagos", pagos);
 	        return v;  
@@ -104,7 +104,7 @@ public class CantinaControl {
 	    
 	    @GetMapping(value = "/pdf_cantina")
 	    public void createPdf(HttpServletRequest request, HttpServletResponse response) {
-	        List<CantinaModel> cant = cadService.listAll();
+	        List<Cantina> cant = cadService.listAll();
 	        boolean isFlag = candreport.creatPdf2(cant, context, request, response);
 	        if (isFlag) {
 	            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cant" + ".pdf");
@@ -114,7 +114,7 @@ public class CantinaControl {
 	    
 	     @GetMapping(value = "/Exls_cantina")
 	    public void createExcel2(HttpServletRequest request, HttpServletResponse response) {
-	        List<CantinaModel> cant = cadService.listAll();
+	        List<Cantina> cant = cadService.listAll();
 	        boolean isFlag = candreport.createExcel2(cant, context, request, response);
 
 	    }

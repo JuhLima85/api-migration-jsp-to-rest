@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.devsibre.Service.AgendaService;
-import br.com.devsibre.Model.AgendaModel;
+import br.com.devsibre.Service.Inteface.AgendaService;
+import br.com.devsibre.Domain.Entity.Agenda;
 
 @Controller
 public class AgendaControl {
@@ -38,7 +38,7 @@ public class AgendaControl {
 	@RequestMapping(value = "/agendas", method = RequestMethod.GET)
 	public ModelAndView getAgenda() {
 		ModelAndView mv = new ModelAndView("agenda.html");
-		List<AgendaModel> agendas = Pservice.listAll();
+		List<Agenda> agendas = Pservice.listAll();
 		mv.addObject("agenda", agendas);
 		return mv;
 	}
@@ -47,7 +47,7 @@ public class AgendaControl {
 	@RequestMapping(value = "/agendas_User", method = RequestMethod.GET)
 	public ModelAndView getAgenda_User() {
 		ModelAndView mv = new ModelAndView("agenda_User.html");
-		List<AgendaModel> agendas = Pservice.listAll();
+		List<Agenda> agendas = Pservice.listAll();
 		mv.addObject("agenda", agendas);
 		return mv;
 	}
@@ -56,7 +56,7 @@ public class AgendaControl {
 	@RequestMapping(value = "/agendas/{id}", method = RequestMethod.GET)
 	public ModelAndView getAgendaDetails(@PathVariable("id") long id) {
 		ModelAndView mv = new ModelAndView("agendaDetails.html");
-		AgendaModel agenda = Pservice.getById(id);
+		Agenda agenda = Pservice.getById(id);
 		mv.addObject("agenda", agenda);
 		return mv;
 	}
@@ -65,7 +65,7 @@ public class AgendaControl {
 	@RequestMapping(value = "/agendas_User/{id}", method = RequestMethod.GET)
 	public ModelAndView getAgendaDetails_User(@PathVariable("id") long id) {
 		ModelAndView mv = new ModelAndView("agendaDetails_User.html");
-		AgendaModel agenda = Pservice.getById(id);
+		Agenda agenda = Pservice.getById(id);
 		mv.addObject("agenda", agenda);
 		return mv;
 	}
@@ -76,7 +76,7 @@ public class AgendaControl {
 	}
 
 	@RequestMapping(value = "/newagenda", method = RequestMethod.POST)
-	public String saveAgenda(@Valid AgendaModel agendas, BindingResult result, RedirectAttributes attributes) {
+	public String saveAgenda(@Valid Agenda agendas, BindingResult result, RedirectAttributes attributes) {
 		if (result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem", "Verifique se os campos obrigatórios foram preenchidos!");
 			return "redirect:/newagenda";

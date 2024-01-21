@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.devsibre.Domain.Entity.Formulario;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.BaseColor;
@@ -24,16 +25,13 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import br.com.devsibre.Model.FormularioModel;
-
-import br.com.devsibre.ServiceImpl.FormularioServiceImpl;
+import br.com.devsibre.Service.FormularioServiceImpl;
 
 @Service
 public class Formulario_Report implements Formulario_Report_Service{
 
 	@Override
-	public boolean creatPdf(List<FormularioModel> cad, ServletContext context, HttpServletRequest request,
+	public boolean creatPdf(List<Formulario> cad, ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		Document document = new Document(PageSize.A4, 40, 40, 10, 10);
 
@@ -125,7 +123,7 @@ public class Formulario_Report implements Formulario_Report_Service{
             
            // String id = getId_c();	
             
-            for (FormularioModel cadastro : cad) {
+            for (Formulario cadastro : cad) {
             	PdfPCell idValue = new PdfPCell(new Paragraph(cadastro.getNome().toString(), tableBody));
             	idValue.setBorderColor(BaseColor.BLACK);
             	idValue.setPaddingLeft(10);
@@ -196,8 +194,8 @@ public class Formulario_Report implements Formulario_Report_Service{
 	}
 
 	@Override
-	public boolean createExcel(List<FormularioModel> cad, ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) {
+	public boolean createExcel(List<Formulario> cad, ServletContext context, HttpServletRequest request,
+                               HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		return false;
 	}

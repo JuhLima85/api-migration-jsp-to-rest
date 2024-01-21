@@ -6,11 +6,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.devsibre.Model.FormularioModel;
+import br.com.devsibre.Domain.Entity.Formulario;
 
 public interface Formulario_Report_Service {
 
-	public boolean creatPdf(List<FormularioModel> cad, ServletContext context, HttpServletRequest request, HttpServletResponse response);
+	public boolean creatPdf(List<Formulario> cad, ServletContext context, HttpServletRequest request, HttpServletResponse response);
 
-    boolean createExcel(List<FormularioModel> cad, ServletContext context, HttpServletRequest request, HttpServletResponse response);
+    boolean createExcel(List<Formulario> cad, ServletContext context, HttpServletRequest request, HttpServletResponse response);
 }

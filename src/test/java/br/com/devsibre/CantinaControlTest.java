@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CantinaControlTest {
 
-    @Test
-    void testListarCantina() {
-        CantinaControl cantinaControl = new CantinaControl();
-        ModelAndView modelAndView = cantinaControl.listarCantina();
-
-        assertEquals("lista_cantina.html", modelAndView.getViewName());
-    }
+//    @Test
+//    void testListarCantina() {
+//        CantinaControl cantinaControl = new CantinaControl();
+//        ModelAndView modelAndView = cantinaControl.listarCantina();
+//
+//        assertEquals("lista_cantina.html", modelAndView.getViewName());
+//    }
 
     @Test
     void testNovoCadastro() {

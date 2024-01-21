@@ -6,16 +6,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.Assert;
 
-import br.com.devsibre.Model.PatrimonioModel;
+import br.com.devsibre.Domain.Entity.Patrimonio;
 
 
 class PatrimonioModelTest {
 
-    private PatrimonioModel patrimonio;
+    private Patrimonio patrimonio;
 
     @BeforeEach
     void setUp() {
-        patrimonio = new PatrimonioModel(1L, "Descrição do patrimônio", 10, new BigDecimal("100.00"), "2023-07-07");
+        patrimonio = new Patrimonio(1L, "Descrição do patrimônio", 10, new BigDecimal("100.00"), "2023-07-07");
     }
 
     @Test
@@ -45,13 +45,13 @@ class PatrimonioModelTest {
 
     @Test
     void testEquals() {
-        PatrimonioModel outroPatrimonio = new PatrimonioModel(1L, "Descrição do patrimônio", 10, new BigDecimal("100.00"), "2023-07-07");
+        Patrimonio outroPatrimonio = new Patrimonio(1L, "Descrição do patrimônio", 10, new BigDecimal("100.00"), "2023-07-07");
         Assert.assertEquals(patrimonio, outroPatrimonio);
     }
 
     @Test
     void testNotEquals() {
-        PatrimonioModel outroPatrimonio = new PatrimonioModel(2L, "Outra descrição", 5, new BigDecimal("50.00"), "2023-07-08");
+        Patrimonio outroPatrimonio = new Patrimonio(2L, "Outra descrição", 5, new BigDecimal("50.00"), "2023-07-08");
         Assert.assertNotEquals(patrimonio, outroPatrimonio);
     }
 }
