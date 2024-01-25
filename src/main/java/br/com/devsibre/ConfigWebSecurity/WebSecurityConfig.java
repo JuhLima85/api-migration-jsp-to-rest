@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/agendas_User").permitAll() // permite qualquer usuário a esta pagina em especifico
 				.antMatchers(HttpMethod.GET, "/agendas_User/{id}").permitAll() // permite qualquer usuário a esta pagina em especifico
 				.antMatchers(HttpMethod.POST, "/agendas_User").permitAll() // permite qualquer usuário a esta pagina em especifico
+				.antMatchers(HttpMethod.GET, "/edita_Cadastro").hasRole("ADMIN")
 				.antMatchers(HttpMethod.GET, "/newagenda").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST, "/newagenda").hasRole("ADMIN") // permite apenas perfis usuario1
 				.antMatchers(HttpMethod.POST, "/agendas").hasRole("ADMIN")
