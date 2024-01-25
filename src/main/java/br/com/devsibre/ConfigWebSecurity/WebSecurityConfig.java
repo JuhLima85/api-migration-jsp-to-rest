@@ -45,7 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET,"/listacantina").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST,"/listacantina").hasRole("ADMIN")
 				.antMatchers(HttpMethod.GET,"/familia").permitAll()
-				//.antMatchers(HttpMethod.POST,"/listacantina").hasRole("USER")
+				// Permita o acesso anônimo aos endpoints do Swagger
+				.antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/entrar").permitAll() // página padrão se efetuou o login
 				.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/entrar"); // página padrão após fazer o logout

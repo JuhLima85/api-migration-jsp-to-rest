@@ -18,6 +18,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.com.devsibre.Service.Inteface.AgendaService;
 import br.com.devsibre.Domain.Entity.Agenda;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Agenda", description = "API para operações da agenda")
 @Controller
 public class AgendaControl {
 
