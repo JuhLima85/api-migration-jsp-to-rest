@@ -61,6 +61,9 @@
 ## TELA DE MODELAGEM
 ![Tela de Modelagem](https://github.com/JuhLima85/devsibre/assets/89745459/9e0e1ba6-3bb4-4d2b-a6e1-75d01812e1bc)
 
+## TELA INICIAL DO SWAGGER
+![Swagger](https://github.com/Ernilson/Sibre-3.0/assets/30840118/5b66ab67-df39-440e-ba67-43a0a2cc98cc)
+
 ## Comandos Docker:
 - abra um terminal dentro da pasta docker
 -  execute o comando: docker-compose up
