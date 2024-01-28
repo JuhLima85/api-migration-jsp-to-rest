@@ -26,25 +26,24 @@
 
 ## EXECUTE
 - mvn clean install
-Na rais do diretorio execute o comando a abaixo gerar imagem e o banco via container
-- docker-compose up --build --force-recreate
 
 ## Acesso ao Frontend do Projeto
 - http://localhost:8080/
 - http://localhost:8080/agendas_User
 - http://localhost:8080/Entrar
 <br><br>
+
 ## TELA INICIAL
-![Tela Inical](https://github.com/Ernilson/devsibre/assets/30840118/2468c14b-1be7-4900-8164-f1289680739f)
+![Tela Inicial](https://github.com/JuhLima85/devsibre/assets/89745459/a0a6ebec-7ef5-45e3-bfc6-e375c68b6a91)
 
 ## TELA DE LOGIN
-![Tela Login](https://github.com/Ernilson/devsibre/assets/30840118/dbe6b679-7184-4ac5-8182-bde2d5f421cf)
+![Tela de Login](https://github.com/JuhLima85/devsibre/assets/89745459/e4c892de-bbb1-4675-9bf2-76afaa194b36)
 
-## TELA DE AGENDA
-![Tela Agenda](https://github.com/Ernilson/devsibre/assets/30840118/3c14cd16-a1d7-4dda-9c80-99a9c0bc25c3)
+## TELA DE MINISTÉRIOS
+![Tela Minstérios](https://github.com/JuhLima85/devsibre/assets/89745459/0894cc73-a5f1-435d-bc29-e6b2effa63a8)
 
 ## TELA CADASTRO
-![Tela de Cadastro](https://github.com/Ernilson/devsibre/assets/30840118/85aced31-da8b-4d36-9e4b-f8fa73c94829)
+![Tela Cadastro](https://github.com/JuhLima85/devsibre/assets/89745459/0a3bdd90-46af-47a0-87d2-fc0da66c997e)
 
 ## TELA DE COBRANÇA
 ![Tela de Cobrança](https://github.com/Ernilson/devsibre/assets/30840118/97b8d018-9853-4e68-bfaf-89e5a694afbc)
@@ -59,11 +58,8 @@ Na rais do diretorio execute o comando a abaixo gerar imagem e o banco via conta
 ![Relatorio de Membros](https://github.com/Ernilson/devsibre/assets/30840118/23e86abb-c18d-4187-a7b2-62a02f0ae6e6)
 
 ## TELA DE MODELAGEM
-![image](https://github.com/Ernilson/devsibre2/assets/30840118/2217b56c-083c-4fd7-8a47-fc0e3f67bb02)
+![Tela de Modelagem](https://github.com/JuhLima85/devsibre/assets/89745459/9e0e1ba6-3bb4-4d2b-a6e1-75d01812e1bc)
 
 ## Comandos Docker:
-docker-compose up --build --force-recreate
-
-## Comando para imagem Docker chamada "devsibre" 
-docker build --build-arg PROFILE=dev --build-arg ADDITIONAL_OPTS="-agentlib:jdwp=transport=dt_socket,
-server=y,suspend=n,address=*:8000" -t devsibre .
+- abra um terminal dentro da pasta docker
+-  execute o comando: docker-compose up
