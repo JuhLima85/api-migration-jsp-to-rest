@@ -31,6 +31,7 @@
 - http://localhost:8080/
 - http://localhost:8080/agendas_User
 - http://localhost:8080/Entrar
+- http://localhost:8080/swagger-ui/index.html
 <br><br>
 
 ## TELA INICIAL
