@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override // Configura as solicitações de acesso por Http
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable() // Desativa as configurações padrão de memória
+		http.cors().and().csrf().disable() // Desativa as configurações padrão de memória
 				.authorizeRequests() // Permite restringir acesso
 				.antMatchers(HttpMethod.GET,"/").permitAll() // Qualquer usuário acessa a página inicial
 				.antMatchers(HttpMethod.GET, "/agendas_User").permitAll() // permite qualquer usuário a esta pagina em especifico
@@ -54,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/entrar").permitAll() // página padrão se efetuou o login
 				.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/entrar"); // página padrão após fazer o logout
+		
 
 	}
 
