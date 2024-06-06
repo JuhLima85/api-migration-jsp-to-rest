@@ -29,7 +29,7 @@ public class ContatoController {
     public Optional<Contato> buscarContatoPorId(@PathVariable Long id) {
         return Optional.ofNullable(contatoService.getById(id));
     }
-    @PostMapping("/gravar")
+    @PostMapping
     public Contato savar(@RequestBody Contato contato) {
         return contatoService.sava(contato);
     }

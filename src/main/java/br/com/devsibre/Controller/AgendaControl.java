@@ -38,7 +38,6 @@ public class AgendaControl {
 		return "index";
 	}
 
-	// Metodo para listar posts da agenda sem Edição
 	@RequestMapping(value = "/agendas", method = RequestMethod.GET)
 	public ModelAndView getAgenda() {
 		ModelAndView mv = new ModelAndView("agenda.html");
@@ -47,7 +46,6 @@ public class AgendaControl {
 		return mv;
 	}
 
-	// Metodo para listar posts da agenda sem Edição
 	@RequestMapping(value = "/agendas_User", method = RequestMethod.GET)
 	public ModelAndView getAgenda_User() {
 		ModelAndView mv = new ModelAndView("agenda_User.html");
@@ -56,7 +54,7 @@ public class AgendaControl {
 		return mv;
 	}
 
-	// Admin
+	
 	@RequestMapping(value = "/agendas/{id}", method = RequestMethod.GET)
 	public ModelAndView getAgendaDetails(@PathVariable("id") long id) {
 		ModelAndView mv = new ModelAndView("agendaDetails.html");
@@ -65,7 +63,6 @@ public class AgendaControl {
 		return mv;
 	}
 
-	// User
 	@RequestMapping(value = "/agendas_User/{id}", method = RequestMethod.GET)
 	public ModelAndView getAgendaDetails_User(@PathVariable("id") long id) {
 		ModelAndView mv = new ModelAndView("agendaDetails_User.html");
@@ -91,7 +88,6 @@ public class AgendaControl {
 		return "redirect:/agendas";
 	}
 
-//   Metodo para excluir dados do cadastro
 	@GetMapping("/remover/{id}")
 	public String excluir(@PathVariable long id) {
 		Pservice.delete(id);
