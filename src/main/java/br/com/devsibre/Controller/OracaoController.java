@@ -28,7 +28,7 @@ public class OracaoController {
     public Optional<Oracao> buscarOracaoPorId(@PathVariable Long id) {
         return Optional.ofNullable(oracaoService.getById(id));
     }
-    @PostMapping("/gravar")
+    @PostMapping
     public Oracao savar(@RequestBody Oracao oracao) {
         return oracaoService.save(oracao);
     }
