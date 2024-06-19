@@ -2,6 +2,7 @@ package br.com.devsibre.Service;
 
 import br.com.devsibre.Domain.Entity.Contatos.Contato;
 import br.com.devsibre.Domain.Repository.ContatoRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,12 +24,12 @@ public class ContatoService {
         return ct;
     }
 
-    public Contato sava(Contato contato) {
-        Contato ct = this.contatoRepository.save(contato);
-        if (ct == null){
-            throw new RuntimeException("nulo");
+    public Contato save(Contato contato) {
+        try {
+            return contatoRepository.save(contato);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Erro ao salvar o contato: " + e.getMessage(), e);
         }
-        return ct;
     }
 
     public Contato getById(Long id){
