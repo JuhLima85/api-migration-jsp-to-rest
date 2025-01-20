@@ -15,10 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-/**
- *
- * @author Convidado
- */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -49,11 +45,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/oracao").permitAll()
 				.antMatchers(HttpMethod.POST, "/contato/gravar").permitAll()
 				.antMatchers(HttpMethod.POST, "/oracao/gravar").permitAll()
+				.antMatchers(HttpMethod.POST, "/oracao").permitAll()
 				.antMatchers("/images/**").permitAll()
 				// Permita o acesso anônimo aos endpoints do Swagger
 				.antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
 				.anyRequest().authenticated()
-				.and().formLogin().loginPage("/entrar").permitAll() // página padrão se efetuou o login
+				.and().formLogin()
+				.loginPage("/entrar")  // Página de login personalizada
+				.defaultSuccessUrl("/bem_vindo", true)  // Página para redirecionar após login bem-sucedido
+				.permitAll()
 				.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/entrar"); // página padrão após fazer o logout
 	}
 
@@ -61,5 +61,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsServer).passwordEncoder(new BCryptPasswordEncoder());
 	}
-
 }

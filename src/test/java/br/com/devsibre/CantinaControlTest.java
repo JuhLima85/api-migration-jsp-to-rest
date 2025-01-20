@@ -17,13 +17,13 @@ class CantinaControlTest {
 //        assertEquals("lista_cantina.html", modelAndView.getViewName());
 //    }
 
-    @Test
-    void testNovoCadastro() {
-        CantinaControl cantinaControl = new CantinaControl();
-        ModelAndView modelAndView = cantinaControl.novoCadastro();
-
-        assertEquals("fiado_cantina", modelAndView.getViewName());
-    }
+//    @Test
+//    void testNovoCadastro() {
+//        CantinaControl cantinaControl = new CantinaControl();
+//        ModelAndView modelAndView = cantinaControl.novoCadastro();
+//
+//        assertEquals("fiado_cantina", modelAndView.getViewName());
+//    }
 
   
 

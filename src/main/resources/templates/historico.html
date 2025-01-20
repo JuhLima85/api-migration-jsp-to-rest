@@ -18,8 +18,8 @@
 				
 				<p th:if="${cadastro != null and cadastro.pessoaMembro}"
 					style="float: right;">
-					<span class="membro-retangulo verde-claro">Membro Deste
-						01/01/1991</span>
+					<span class="membro-retangulo verde-claro">Membro Desde
+						00/00/0000</span>
 				</p>				
 				<p th:unless="${cadastro != null and cadastro.pessoaMembro}"
 					style="float: right;">
@@ -30,8 +30,8 @@
 					th:if="${cadastro != null and cadastro.pessoaNome != null}"
 					th:text="'Nome: ' + ${cadastro.pessoaNome}"></h5>
 				<p class="card-text"
-					th:if="${cadastro != null and cadastro.idPessoa != null}"
-					th:text="'idPessoa: ' + ${cadastro.idPessoa}"></p>
+				   th:if="${cadastro != null and cadastro.idPessoa != null}" style="display: none;"
+				   th:text="'idPessoa: ' + ${cadastro.idPessoa}"></p>
 				<p class="card-text"
 					th:if="${cadastro != null and cadastro.pessoaLogradouro != null}"
 					th:text="'Quadra: ' + ${cadastro.pessoaLogradouro}"></p>

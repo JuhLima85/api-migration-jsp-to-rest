@@ -17,6 +17,7 @@ import br.com.devsibre.Domain.Entity.Formulario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,8 @@ import br.com.devsibre.Service.RelacionamentoServiceImpl;
 import br.com.devsibre.UtilsReports.Formulario_Report;
 import br.com.devsibre.Domain.Entity.DTO.SaveOrUpdateResponse;
 
+import static br.com.devsibre.UtilsReports.ModelAuthentication_Report.addAuthenticationStatusToModel;
+
 @Controller
 public class FormularioControl {
 
@@ -57,7 +60,8 @@ public class FormularioControl {
 
 	// Método para abrir novo formulário
 	@RequestMapping(method = RequestMethod.GET, value = "/formulario")
-	public ModelAndView novoCadastro(@RequestParam(value = "acao", required = false) String acao) {
+	public ModelAndView novoCadastro(@RequestParam(value = "acao", required = false) String acao, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		ModelAndView v = new ModelAndView();
 		List<Formulario> retorno = service.listAll();
 		v.addObject("selectPessoa", retorno);
@@ -73,7 +77,8 @@ public class FormularioControl {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/salvar")
-	public String salvar(Formulario cadastro, RedirectAttributes attributes) {
+	public String salvar(Formulario cadastro, RedirectAttributes attributes, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		SaveOrUpdateResponse response = service.saveOrUpdate(cadastro);
 
 	    // Salvo o id e nome da pessoa1 temporariamente - usado em novoCadastro e vincularParente
@@ -95,7 +100,8 @@ public class FormularioControl {
 	// Adicionar parentesco
 	@RequestMapping(method = RequestMethod.POST, value = "/{idPessoa1}/relacionar/{idPessoa2}")
 	public ResponseEntity<String> vincularParente(@RequestParam("selectPessoa") String idpessoa2,
-	        @RequestParam("parentesco") int grauparentesco, Model model) {
+	        @RequestParam("parentesco") int grauparentesco, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 	    Formulario pessoa1 = service.getId(valoresTemporarios.getId_c());
 	    Formulario pessoa2 = service.getId(Long.parseLong(idpessoa2));
 	    GrauDeParentesco grau = service.buscarGrauDeParentescoPorGrau(grauparentesco, null);	  
@@ -116,7 +122,8 @@ public class FormularioControl {
 	// Atualizar Relacionamento
 	@RequestMapping(value = "/atualizarRelacionamento", method = RequestMethod.POST)
 	public String atualizarRelacionamento(@ModelAttribute("relacionamento") Relacionamento relacionamento,
-			@RequestParam("valorParentesco") int valorParentesco, Model model) {
+			@RequestParam("valorParentesco") int valorParentesco, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 
 		try {
 			relacionamentoServiceImpl.atualizarGrauDeParentesco(relacionamento.getId().longValue(), valorParentesco);
@@ -128,93 +135,84 @@ public class FormularioControl {
 		return "/editarRelacionamento";
 	}
 
-	private String montarTabelaHtml(List<Relacionamento> relacionamentos) {
-		StringBuilder html = new StringBuilder();
-		for (Relacionamento relacionamento : relacionamentos) {			
-			html.append("<tr>");
-			html.append("<td>").append(relacionamento.getPessoa2().getNome()).append("</td>");
-			html.append("<td>").append(relacionamento.getGrauDeParentesco().getDescricao()).append("</td>");
-			html.append("</tr>");
-		}		
-		if (relacionamentos.isEmpty()) {
-			html.append("<tr><td colspan=\"2\">Nenhum registro encontrado</td></tr>");
-		}
-		return html.toString();
-	}
 
 	@GetMapping("/deletarRelacionamento/{id}")
 	public ModelAndView deletarRelacionamento(@PathVariable long id, @RequestParam(required = false) Long idPessoa,
-			HttpSession session) {
+			HttpSession session, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		relacionamentoServiceImpl.deletarRelacionamento(id);
 		List<RelacionamentoDTO> relacionamentos = relacionamentoServiceImpl.listarHistorico(idPessoa, session);
-		
+
 		CadastroDTO cadastro = (CadastroDTO) session.getAttribute("historicoDTO");
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		if (cadastro != null && cadastro.getPessoaData() != null && !cadastro.getPessoaData().isEmpty()) {
 			LocalDate data = LocalDate.parse(cadastro.getPessoaData(), DateTimeFormatter.ISO_DATE);
 			cadastro.setPessoaData(data.format(formatter));
 		}
 
-		ModelAndView model = new ModelAndView("historico.html");
-		model.addObject("relacionamentos", relacionamentos);
-		model.addObject("cadastro", cadastro);
-		return model;
+		ModelAndView mV = new ModelAndView("historico.html");
+		mV.addObject("relacionamentos", relacionamentos);
+		mV.addObject("cadastro", cadastro);
+		return mV;
 	}
 
 	// Metodo para listar todos e buscar os cadastros
 	@GetMapping("/listarcadastro")
 	public ModelAndView lista(@RequestParam(value = "nome", required = false) String nome,
-			@RequestParam(value = "membroFilter", defaultValue = "todos") String membroFilter) {
+			@RequestParam(value = "membroFilter", defaultValue = "todos") String membroFilter, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		List<Formulario> retorno = new ArrayList<>();
-		ModelAndView model = new ModelAndView("listaCadastro.html");
+		ModelAndView mV = new ModelAndView("listaCadastro.html");
 
 		if ("membros".equals(membroFilter)) {
 			retorno = service.listarApenasMembros();
 		} else if ("naoMembros".equals(membroFilter)) {
 			retorno = service.listarApenasNaoMembros();
 		} else if ("todos".equals(membroFilter) && nome == null) {
-			retorno = service.listAll(); 
+			retorno = service.listAll();
 		} else {
 			retorno = service.findByNomeContainingIgnoreCase(nome);
 		}
 
-		int count = retorno.size(); 
+		int count = retorno.size();
 
-		model.addObject("cadastro", retorno);
-		model.addObject("nome", nome);
-		model.addObject("count", count); 
-		return model;
+		mV.addObject("cadastro", retorno);
+		mV.addObject("nome", nome);
+		mV.addObject("count", count);
+		return mV;
 	}
 
 	/*
 	 * Listar cadastro por id e seus relaciomentos
 	 */
 	@GetMapping("/historico/{id}")
-	public ModelAndView listaCadastroERelacionamentos(@PathVariable Long id, HttpSession session) {
+	public ModelAndView listaCadastroERelacionamentos(@PathVariable Long id, HttpSession session, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		List<RelacionamentoDTO> relacionamentos = relacionamentoServiceImpl.listarHistorico(id, session);
-		
+
 		CadastroDTO cadastro = (CadastroDTO) session.getAttribute("historicoDTO");
-		
+
 		valoresTemporarios.setId_c(cadastro.getIdPessoa());
 		valoresTemporarios.setNome(cadastro.getPessoaNome());
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		if (cadastro != null && cadastro.getPessoaData() != null && !cadastro.getPessoaData().isEmpty()) {
 			LocalDate data = LocalDate.parse(cadastro.getPessoaData(), DateTimeFormatter.ISO_DATE);
 			cadastro.setPessoaData(data.format(formatter));
 		}
 
-		ModelAndView model = new ModelAndView("historico.html");
-		model.addObject("relacionamentos", relacionamentos);
-		model.addObject("cadastro", cadastro);
-		return model;
+		ModelAndView mV = new ModelAndView("historico.html");
+		mV.addObject("relacionamentos", relacionamentos);
+		mV.addObject("cadastro", cadastro);
+		return mV;
 	}
 
 	// Metodo para excluir dados do cadastro
 	@GetMapping("/deletar/{idPessoa}")
-	public String remover(@PathVariable long idPessoa, @RequestParam(required = false) Long idRelacionamento) {
-		if (idRelacionamento != null) {			
+	public String remover(@PathVariable long idPessoa, @RequestParam(required = false) Long idRelacionamento, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
+		if (idRelacionamento != null) {
 			relacionamentoServiceImpl.deletarRelacionamentosPorPessoa1(idPessoa);
 			System.out.println("ID do relacionamento: " + idRelacionamento);
 		}
@@ -224,20 +222,22 @@ public class FormularioControl {
 
 	// Metodo para abrir formulario de edição de cadastro
 	@GetMapping("/edite/{idPessoa}")
-	public String editar(@PathVariable long idPessoa, Model m) {
+	public String editar(@PathVariable long idPessoa, Model m, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		Formulario cad = service.getId(idPessoa);
-		m.addAttribute("cad", cad);		
+		m.addAttribute("cad", cad);
 		return "edita_Cadastro";
 	}
 
 	// Metodo para abrir formulario de edição de relacionamento
 	@GetMapping("/editeRelacionamento/{id}")
-	public String editarRelacionamento(@PathVariable long id,  @RequestParam(name = "idPessoa", required = false) Long idPessoa, Model model) {		
-		Relacionamento rela = relacionamentoServiceImpl.buscarRelacionamentoPorId(id);		
-		if(valoresTemporarios.getNome().equals( rela.getPessoa2().getNome())) {			
-	        rela.getPessoa2().setNome(rela.getPessoa1().getNome());			
+	public String editarRelacionamento(@PathVariable long id,  @RequestParam(name = "idPessoa", required = false) Long idPessoa, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
+		Relacionamento rela = relacionamentoServiceImpl.buscarRelacionamentoPorId(id);
+		if(valoresTemporarios.getNome().equals( rela.getPessoa2().getNome())) {
+	        rela.getPessoa2().setNome(rela.getPessoa1().getNome());
 		}
-				
+
 		List<Formulario> retorno = service.listAll();
 		model.addAttribute("selectPessoa", retorno);
 		model.addAttribute("relacionamento", rela);
@@ -246,20 +246,23 @@ public class FormularioControl {
 	}
 
 	@RequestMapping(value = "/editsave", method = RequestMethod.POST)
-	public String editsave(@ModelAttribute("cad") Formulario emp, Model model) {
-
+	public String editsave(@ModelAttribute("cad") Formulario emp, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		try {
 			boolean idd = service.alterar(emp);
 			model.addAttribute("mensagem", "Atualização realizada com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("mensagem_error", "Erro ao atualizar!");
+			model.addAttribute("cad", emp);
 		}
+		model.addAttribute("cad", emp);
 		return "/edita_Cadastro";
 	}
 
 	@GetMapping(value = "/pdf")
-	public void createPdf(HttpServletRequest request, HttpServletResponse response) {
+	public void createPdf(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		List<Formulario> cad = service.listAll();
 		boolean isFlag = cadreport.creatPdf(cad, context, request, response);
 		if (isFlag) {
@@ -269,13 +272,28 @@ public class FormularioControl {
 	}
 
 	@GetMapping(value = "/Exls")
-	public void createExcel(HttpServletRequest request, HttpServletResponse response) {
+	public void createExcel(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+		addAuthenticationStatusToModel(model, authentication);
 		List<Formulario> cad = service.listAll();
 		boolean isFlag = cadreport.createExcel(cad, context, request, response);
 //        if (isFlag) {
 //            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cad" + ".pdf");
 //            filedownload(fullPath, response, "cad.pdf");
 //        }
+	}
+
+	private String montarTabelaHtml(List<Relacionamento> relacionamentos) {
+		StringBuilder html = new StringBuilder();
+		for (Relacionamento relacionamento : relacionamentos) {
+			html.append("<tr>");
+			html.append("<td>").append(relacionamento.getPessoa2().getNome()).append("</td>");
+			html.append("<td>").append(relacionamento.getGrauDeParentesco().getDescricao()).append("</td>");
+			html.append("</tr>");
+		}
+		if (relacionamentos.isEmpty()) {
+			html.append("<tr><td colspan=\"2\">Nenhum registro encontrado</td></tr>");
+		}
+		return html.toString();
 	}
 
 	private void filedownload(String fullPath, HttpServletResponse response, String fileName) {

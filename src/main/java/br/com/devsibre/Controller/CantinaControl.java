@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.devsibre.UtilsReports.Cantina;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.devsibre.Service.CantinaServiceImpl;
 import br.com.devsibre.UtilsReports.Cantina_reports;
+
+import static br.com.devsibre.UtilsReports.ModelAuthentication_Report.addAuthenticationStatusToModel;
 
 @Controller
 public class CantinaControl {
@@ -38,7 +41,8 @@ public class CantinaControl {
 	    
 	    //Metodo para listar debitos
 	    @RequestMapping(method = RequestMethod.GET, value="/listacantina")
-	    public ModelAndView listarCantina(){
+	    public ModelAndView listarCantina(Model model, Authentication authentication){
+			addAuthenticationStatusToModel(model, authentication);
 	      ModelAndView v = new ModelAndView("lista_cantina.html");
 	      List<Cantina> cantina = new ArrayList<>();
 	      cantina = cadService.listAll();
@@ -48,7 +52,8 @@ public class CantinaControl {
 	    
 	     //Metodo para incluir novo cadastro
 	    @RequestMapping(method = RequestMethod.GET, value = "/novo_debito")
-	    public ModelAndView novoCadastro() {
+	    public ModelAndView novoCadastro(Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        ModelAndView v = new ModelAndView("fiado_cantina.html");
 	        v.addObject(new Cantina());
 	        v.setViewName("fiado_cantina");
@@ -57,14 +62,16 @@ public class CantinaControl {
 
 	    //Metodo para salvar debitos
 	    @RequestMapping(method = RequestMethod.POST, value = "/salvar_debito")
-	    public String salvar(Cantina c) {
+	    public String salvar(Cantina c, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        cadService.saveOrUpdate(c);
 	        return "redirect:/novo_debito";
 	    }
 	    
 	    //Metodo para alterar débitos  
 	    @GetMapping("/editeDebito/{id_n}")
-	    public String editar(@PathVariable long id_n, Model m) {
+	    public String editar(@PathVariable long id_n, Model m, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        Cantina cant = cadService.getId(id_n);
 	        m.addAttribute("cant", cant);
 	        return "editarDebitos";
@@ -72,7 +79,8 @@ public class CantinaControl {
 
 	    //Metodo para alterar débitos
 	    @RequestMapping(value = "/editsaveCantina", method = RequestMethod.POST)
-	    public ModelAndView editsaveCantina(@ModelAttribute("cant") Cantina emp) {
+	    public ModelAndView editsaveCantina(@ModelAttribute("cant") Cantina emp, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        boolean idd = Boolean.getBoolean("id_n");
 	        idd = cadService.alterar(emp);
 	        return new ModelAndView("redirect:/listacantina");
@@ -80,14 +88,16 @@ public class CantinaControl {
 
 	    //Metodo para excluir dados do débitos
 	    @GetMapping("/apagaDebito/{id_n}")
-	    public String remover(@PathVariable long id_n) {
+	    public String remover(@PathVariable long id_n, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        cadService.delete(id_n);
 	        return "redirect:/listacantina";
 	    }
 	    
 	    //Metodo para listar todos os débitos pagos
 	    @RequestMapping(method = RequestMethod.GET, value="/lista_pagos")
-	    public ModelAndView listarPagos(){
+	    public ModelAndView listarPagos(Model model, Authentication authentication){
+		  addAuthenticationStatusToModel(model, authentication);
 	      ModelAndView v = new ModelAndView("lista_pagos.html");
 	      List<Cantina> pagos = new ArrayList<>();
 	      pagos = cadService.listAll();
@@ -97,13 +107,15 @@ public class CantinaControl {
 	    
 	    //Metodo para excluir dados do débitos
 	    @GetMapping("/apagaPagos/{id_n}")
-	    public String remove_Pagos(@PathVariable long id_n) {
+	    public String remove_Pagos(@PathVariable long id_n, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        cadService.delete(id_n);
 	        return "redirect:/lista_pagos";
 	    }
 	    
 	    @GetMapping(value = "/pdf_cantina")
-	    public void createPdf(HttpServletRequest request, HttpServletResponse response) {
+	    public void createPdf(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        List<Cantina> cant = cadService.listAll();
 	        boolean isFlag = candreport.creatPdf2(cant, context, request, response);
 	        if (isFlag) {
@@ -113,10 +125,10 @@ public class CantinaControl {
 	    }
 	    
 	     @GetMapping(value = "/Exls_cantina")
-	    public void createExcel2(HttpServletRequest request, HttpServletResponse response) {
+	    public void createExcel2(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+			addAuthenticationStatusToModel(model, authentication);
 	        List<Cantina> cant = cadService.listAll();
 	        boolean isFlag = candreport.createExcel2(cant, context, request, response);
-
 	    }
 
 	    private void filedownload(String fullPath, HttpServletResponse response, String fileName) {
@@ -143,5 +155,4 @@ public class CantinaControl {
 	            }
 	        }
 	    }
-
 }

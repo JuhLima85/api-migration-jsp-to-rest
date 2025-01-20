@@ -6,7 +6,7 @@ services:
       dockerfile: ./Dockerfile
     image: devsibre
     ports:
-        - '8081:8080'
+        - '8080:8080'
         - '5005:5005'
         
     environment:
@@ -17,11 +17,11 @@ services:
   db:
     image: mysql:5.6
     ports:
-      - '3308:3306'
+      - '3309:3309'
           
     environment:
       - MYSQL_ROOT_HOT=%
-      - MYSQL_DATABASE=devsibre      
+      - MYSQL_DATABASE=devsibre
       - MYSQL_ROOT_PASSWORD=root
           
     volumes:

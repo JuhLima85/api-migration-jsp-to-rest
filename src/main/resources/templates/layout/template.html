@@ -1,78 +1,86 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head">
-<title>SIBRE</title>
-<meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-	crossorigin="anonymous">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet" th:href="@{/css/bootstrap.min}">
+	<title>SIBRE</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet"
+		  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+		  crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min}">
 </head>
 <body>
-	<!-- BARRA DE NAVEGAÇÃO -->
-	<header th:fragment="header">
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<div class="container">
-				<a class="navbar-brand" href="#"> <strong>SIBRE</strong>
-				</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
+<!-- BARRA DE NAVEGAÇÃO -->
+<header th:fragment="header">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<img th:src="@{/images/cruz1.png}" alt="Cruz"
+			 style="width: 50px; height: 50px; transform: rotate(-10deg);" /> <a
+			class="navbar-brand"> <strong>SIBRE</strong>
+	</a>
+		<div class="container">
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
 					data-target="#navbarSupportedContent"
 					aria-controls="navbarSupportedContent" aria-expanded="false"
 					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-				<!-- MENUS -->
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<li class="nav-item active"><a class="nav-link"
-							th:href="@{/}">Início<span class="sr-only">(current)</span></a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/listarcadastro}">Cadastro</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/novo_debito}">Cantina</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/novo_Patrimonio}">Patrimônio</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/agendas}">Relatórios</a></li>
-					</ul>
-					<form class="form-inline my-2 my-lg-0" form-method="post"
-						th:action="@{/logout}">
-						<button class"btn btn-outline-danger my-2 my-sm-0btn-sm" type"submit">Logout</button>
-					</form>
+			<!-- MENUS -->
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active"><a class="nav-link"
+												   th:href="@{/}">Início<span class="sr-only">(current)</span></a></li>
+					<li class="nav-item"><a class="nav-link"
+											th:href="@{/listarcadastro}">Cadastro</a></li>
+					<li class="nav-item"><a class="nav-link"
+											th:href="@{/novo_debito}">Cantina</a></li>
+					<li class="nav-item"><a class="nav-link"
+											th:href="@{/novo_Patrimonio}">Patrimônio</a></li>
+					<li class="nav-item"><a class="nav-link"
+											th:href="@{/agendas}">Relatórios</a></li>
+				</ul>
+
+				<!-- Se o usuário estiver autenticado, exibe o botão de sair; caso contrário, exibe o botão de entrar -->
+				<div th:if="${isAuthenticated}">
+					<a href="/logout">Sair</a>
+				</div>
+				<div th:if="${!isAuthenticated}">
+					<a href="/entrar">Entrar</a>
 				</div>
 			</div>
-		</nav>
-	</header>
-	
-	 <!-- CORPO DA PAGINA -->
-        <div class="container">
+		</div>
+	</nav>
+</header>
 
-        </div>
+<!-- CORPO DA PAGINA -->
+<div class="container"></div>
 
-	<!-- RODA PÉ DA PAGINA -->
-<footer class="text-center fixed-bottom mt-5" th:fragment="footer" >
-    <div class="container-fluid">
-        <div class="row justify-content-end my-2 mt-5">        
-            <!-- BOTÃO VOLTAR -->
-            <!-- 
-             o atributo th:if verifica se a URL da requisição não é igual a http://localhost:8080/. Se essa condição for verdadeira, o botão "Voltar" será renderizado; caso 
-             contrário, ele será ignorado.
-             -->
-           <button th:if="${#httpServletRequest.requestURL.toString() ne 'http://localhost:8080/'}" class="btn btn-success" onclick="window.history.back()">Voltar</button>              
-        </div>
-    </div>
+<!-- RODA PÉ DA PAGINA -->
+<footer class="text-center fixed-bottom mt-5" th:fragment="footer">
+	<div class="container-fluid">
+		<div class="row justify-content-end my-3 mt-5">
+			<!-- BOTÃO VOLTAR -->
+			<!--
+         o atributo th:if verifica se a URL da requisição não é igual a https://sibre2023.com.br/ ou http://localhost:8080/. Se essa condição for verdadeira, o botão "Voltar" será renderizado; caso
+         contrário, ele será ignorado.
+         -->
+			<button
+					th:unless="${#httpServletRequest.requestURL.toString().endsWith('/') or #httpServletRequest.requestURL.toString().endsWith('http://localhost:8080/') or #httpServletRequest.requestURL.toString().endsWith('/bem_vindo')}"
+					class="btn btn-success mr-2" onclick="window.history.back()">Voltar</button>
+		</div>
 
-    <div class="bg-dark text-center text-white">
-        <!-- Parágrafo -->
-        <p>Todos os direitos pertencem à Segunda Igreja Batista no Recanto da Emas.</p>
-    </div>
-    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.min}" />
-    <script type="text/javascript" th:src="@{/js/popper.min}" />
-    <script type="text/javascript" th:src="@{/js/bootstrap.min}" />
+		<div class="bg-dark text-center text-white">
+			<!-- Parágrafo -->
+			<p>Todos os direitos pertencem à Segunda Igreja Batista no
+				Recanto da Emas.</p>
+		</div>
+
+		<script type="text/javascript" th:src="@{/js/jquery-3.4.1.min}"></script>
+		<script type="text/javascript" th:src="@{/js/popper.min}"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+	</div>
 </footer>
 </body>
 </html>
