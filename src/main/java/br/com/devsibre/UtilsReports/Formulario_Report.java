@@ -30,10 +30,10 @@ import br.com.devsibre.Service.FormularioServiceImpl;
 @Service
 public class Formulario_Report implements Formulario_Report_Service{
 
-	@Override
-	public boolean creatPdf(List<Formulario> cad, ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) {
-		Document document = new Document(PageSize.A4, 40, 40, 10, 10);
+    @Override
+    public boolean creatPdf(List<Formulario> cad, ServletContext context, HttpServletRequest request,
+                            HttpServletResponse response, String membroFilter) {
+        Document document = new Document(PageSize.A4, 40, 40, 10, 10);
 
         try {
             String filePath = context.getRealPath("/resources/reports");
@@ -48,7 +48,14 @@ public class Formulario_Report implements Formulario_Report_Service{
 
             Font mainFont = FontFactory.getFont("Arial", 10, BaseColor.BLACK);
 
-            Paragraph paragraph = new Paragraph("Todos os cadastros", mainFont);
+            Paragraph paragraph;
+            if ("membros".equals(membroFilter)) {
+                paragraph = new Paragraph("Lista de Membros da SIBRE", mainFont);
+            } else if ("naoMembros".equals(membroFilter)) {
+                paragraph = new Paragraph("Lista de Não Membros da SIBRE", mainFont);
+            } else {
+                paragraph = new Paragraph("Todos os cadastros da SIBRE", mainFont);
+            }
             paragraph.setAlignment(Element.ALIGN_CENTER);
             paragraph.setIndentationLeft(50);
             paragraph.setIndentationRight(50);
@@ -65,16 +72,8 @@ public class Formulario_Report implements Formulario_Report_Service{
 
             float[] columnWidths = {5f, 5f, 4f, 3f, 3f};
             table.setWidths(columnWidths);
-            /*
-            PdfPCell id = new PdfPCell(new Paragraph("ID", tableHeader));
-            id.setBorderColor(BaseColor.BLACK);
-            id.setPaddingLeft(10);
-            id.setHorizontalAlignment(Element.ALIGN_CENTER);
-            id.setVerticalAlignment(Element.ALIGN_CENTER);
-            id.setBackgroundColor(BaseColor.WHITE);
-            id.setExtraParagraphSpace(5f);
-            table.addCell(id);
-            */
+
+            //Determina as Colunas
             PdfPCell nome = new PdfPCell(new Paragraph("Nome", tableHeader));
             nome.setBorderColor(BaseColor.BLACK);
             nome.setPaddingLeft(10);
@@ -84,16 +83,16 @@ public class Formulario_Report implements Formulario_Report_Service{
             nome.setExtraParagraphSpace(5f);
             table.addCell(nome);
 
-            PdfPCell ender = new PdfPCell(new Paragraph("Endereco", tableHeader));
-            ender.setBorderColor(BaseColor.BLACK);
-            ender.setPaddingLeft(10);
-            ender.setHorizontalAlignment(Element.ALIGN_CENTER);
-            ender.setVerticalAlignment(Element.ALIGN_CENTER);
-            ender.setBackgroundColor(BaseColor.WHITE);
-            ender.setExtraParagraphSpace(5f);
-            table.addCell(ender);
+            PdfPCell logradouro = new PdfPCell(new Paragraph("Endereco", tableHeader));
+            logradouro.setBorderColor(BaseColor.BLACK);
+            logradouro.setPaddingLeft(10);
+            logradouro.setHorizontalAlignment(Element.ALIGN_CENTER);
+            logradouro.setVerticalAlignment(Element.ALIGN_CENTER);
+            logradouro.setBackgroundColor(BaseColor.WHITE);
+            logradouro.setExtraParagraphSpace(5f);
+            table.addCell(logradouro);
 
-            PdfPCell fone = new PdfPCell(new Paragraph("Cidade", tableHeader));
+            PdfPCell fone = new PdfPCell(new Paragraph("Telefone", tableHeader));
             fone.setBorderColor(BaseColor.BLACK);
             fone.setPaddingLeft(10);
             fone.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -101,46 +100,36 @@ public class Formulario_Report implements Formulario_Report_Service{
             fone.setBackgroundColor(BaseColor.WHITE);
             fone.setExtraParagraphSpace(5f);
             table.addCell(fone);
-             
-            PdfPCell email = new PdfPCell(new Paragraph("Telefone", tableHeader));
-            email.setBorderColor(BaseColor.BLACK);
-            email.setPaddingLeft(10);
-            email.setHorizontalAlignment(Element.ALIGN_CENTER);
-            email.setVerticalAlignment(Element.ALIGN_CENTER);
-            email.setBackgroundColor(BaseColor.WHITE);
-            email.setExtraParagraphSpace(5f);
-            table.addCell(email);
-            
 
-            PdfPCell status = new PdfPCell(new Paragraph("Status", tableHeader));
-            status.setBorderColor(BaseColor.BLACK);
-            status.setPaddingLeft(10);
-            status.setHorizontalAlignment(Element.ALIGN_CENTER);
-            status.setVerticalAlignment(Element.ALIGN_CENTER);
-            status.setBackgroundColor(BaseColor.WHITE);
-            status.setExtraParagraphSpace(5f);
-            table.addCell(status);
-            
-           // String id = getId_c();	
-            
+            PdfPCell data = new PdfPCell(new Paragraph("Data_Nasc", tableHeader));
+            data.setBorderColor(BaseColor.BLACK);
+            data.setPaddingLeft(10);
+            data.setHorizontalAlignment(Element.ALIGN_CENTER);
+            data.setVerticalAlignment(Element.ALIGN_CENTER);
+            data.setBackgroundColor(BaseColor.WHITE);
+            data.setExtraParagraphSpace(5f);
+            table.addCell(data);
+
+            PdfPCell membro = new PdfPCell(new Paragraph("Membro", tableHeader));
+            membro.setBorderColor(BaseColor.BLACK);
+            membro.setPaddingLeft(10);
+            membro.setHorizontalAlignment(Element.ALIGN_CENTER);
+            membro.setVerticalAlignment(Element.ALIGN_CENTER);
+            membro.setBackgroundColor(BaseColor.WHITE);
+            membro.setExtraParagraphSpace(5f);
+            table.addCell(membro);
+
+            // Preenche as informações na tabela
             for (Formulario cadastro : cad) {
-            	PdfPCell idValue = new PdfPCell(new Paragraph(cadastro.getNome().toString(), tableBody));
-            	idValue.setBorderColor(BaseColor.BLACK);
-            	idValue.setPaddingLeft(10);
-            	idValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-            	idValue.setVerticalAlignment(Element.ALIGN_CENTER);
-            	idValue.setBackgroundColor(BaseColor.WHITE);
-            	idValue.setExtraParagraphSpace(5f);
-                table.addCell(idValue);
-                
-//                PdfPCell nomeValue = new PdfPCell(new Paragraph(cadastro.getNome(), tableBody));
-//                nomeValue.setBorderColor(BaseColor.BLACK);
-//                nomeValue.setPaddingLeft(10);
-//                nomeValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                nomeValue.setVerticalAlignment(Element.ALIGN_CENTER);
-//                nomeValue.setBackgroundColor(BaseColor.WHITE);
-//                nomeValue.setExtraParagraphSpace(5f);
-//                table.addCell(nomeValue);
+
+                PdfPCell nomeValue = new PdfPCell(new Paragraph(cadastro.getNome(), tableBody));
+                nomeValue.setBorderColor(BaseColor.BLACK);
+                nomeValue.setPaddingLeft(10);
+                nomeValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+                nomeValue.setVerticalAlignment(Element.ALIGN_CENTER);
+                nomeValue.setBackgroundColor(BaseColor.WHITE);
+                nomeValue.setExtraParagraphSpace(5f);
+                table.addCell(nomeValue);
 
                 PdfPCell enderValue = new PdfPCell(new Paragraph(cadastro.getLogradouro(), tableBody));
                 enderValue.setBorderColor(BaseColor.BLACK);
@@ -151,7 +140,7 @@ public class Formulario_Report implements Formulario_Report_Service{
                 enderValue.setExtraParagraphSpace(5f);
                 table.addCell(enderValue);
 
-                PdfPCell foneValue = new PdfPCell(new Paragraph(cadastro.getBairro(), tableBody));
+                PdfPCell foneValue = new PdfPCell(new Paragraph(cadastro.getFone(), tableBody));
                 foneValue.setBorderColor(BaseColor.BLACK);
                 foneValue.setPaddingLeft(10);
                 foneValue.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -159,24 +148,26 @@ public class Formulario_Report implements Formulario_Report_Service{
                 foneValue.setBackgroundColor(BaseColor.WHITE);
                 foneValue.setExtraParagraphSpace(5f);
                 table.addCell(foneValue);
- 
-                PdfPCell emailValue = new PdfPCell(new Paragraph(cadastro.getFone(), tableBody));
-                emailValue.setBorderColor(BaseColor.BLACK);
-                emailValue.setPaddingLeft(10);
-                emailValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-                emailValue.setVerticalAlignment(Element.ALIGN_CENTER);
-                emailValue.setBackgroundColor(BaseColor.WHITE);
-                emailValue.setExtraParagraphSpace(5f);
-                table.addCell(emailValue);
 
-//                PdfPCell statusValue = new PdfPCell(new Paragraph(cadastro.getStatus(), tableBody));
-//                statusValue.setBorderColor(BaseColor.BLACK);
-//                statusValue.setPaddingLeft(10);
-//                statusValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                statusValue.setVerticalAlignment(Element.ALIGN_CENTER);
-//                statusValue.setBackgroundColor(BaseColor.WHITE);
-//                statusValue.setExtraParagraphSpace(5f);
-//                table.addCell(statusValue);
+                PdfPCell dataNascValue = new PdfPCell(new Paragraph(cadastro.getData(), tableBody));
+                dataNascValue.setBorderColor(BaseColor.BLACK);
+                dataNascValue.setPaddingLeft(10);
+                dataNascValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+                dataNascValue.setVerticalAlignment(Element.ALIGN_CENTER);
+                dataNascValue.setBackgroundColor(BaseColor.WHITE);
+                dataNascValue.setExtraParagraphSpace(5f);
+                table.addCell(dataNascValue);
+
+                PdfPCell membroValue = new PdfPCell(
+                        new Paragraph(cadastro.isMembro() ? "Sim" : "Não", tableBody)
+                );
+                membroValue.setBorderColor(BaseColor.BLACK);
+                membroValue.setPaddingLeft(10);
+                membroValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+                membroValue.setVerticalAlignment(Element.ALIGN_CENTER);
+                membroValue.setBackgroundColor(BaseColor.WHITE);
+                membroValue.setExtraParagraphSpace(5f);
+                table.addCell(membroValue);
             }
 
             document.add(table);
@@ -191,13 +182,12 @@ public class Formulario_Report implements Formulario_Report_Service{
 
         }
         return false;
-	}
+    }
 
-	@Override
-	public boolean createExcel(List<Formulario> cad, ServletContext context, HttpServletRequest request,
+    @Override
+    public boolean createExcel(List<Formulario> cad, ServletContext context, HttpServletRequest request,
                                HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/oracao").permitAll()
 				.antMatchers(HttpMethod.POST, "/contato/gravar").permitAll()
 				.antMatchers(HttpMethod.POST, "/oracao/gravar").permitAll()
+				.antMatchers(HttpMethod.POST,"/editsave").permitAll()
 				.antMatchers(HttpMethod.POST, "/oracao").permitAll()
 				.antMatchers("/images/**").permitAll()
 				// Permita o acesso anônimo aos endpoints do Swagger

@@ -26,7 +26,6 @@ public class Formulario {
 	private String localidade;
 	private String uf;
 	private boolean membro;
-	private boolean batizado; // retirar
 
 	@OneToMany(mappedBy = "pessoa1", cascade = CascadeType.ALL)
 	private List<Relacionamento> relacionamentosPessoa1;
@@ -39,7 +38,7 @@ public class Formulario {
 	}
 
 	public Formulario(Long id_c, String nome, String fone, String email, String data, String cep,
-                      String logradouro, String bairro, String localidade, String uf, boolean membro, boolean batizado,
+                      String logradouro, String bairro, String localidade, String uf, boolean membro,
                       List<Relacionamento> relacionamentosPessoa1, List<Relacionamento> relacionamentosPessoa2) {
 		super();
 		this.id_c = id_c;
@@ -53,7 +52,6 @@ public class Formulario {
 		this.localidade = localidade;
 		this.uf = uf;
 		this.membro = membro;
-		this.batizado = batizado;
 		this.relacionamentosPessoa1 = relacionamentosPessoa1;
 		this.relacionamentosPessoa2 = relacionamentosPessoa2;
 	}
@@ -146,14 +144,6 @@ public class Formulario {
 		this.membro = membro;
 	}
 
-	public boolean isBatizado() {
-		return batizado;
-	}
-
-	public void setBatizado(boolean batizado) {
-		this.batizado = batizado;
-	}
-
 	public List<Relacionamento> getRelacionamentosPessoa1() {
 		return relacionamentosPessoa1;
 	}
@@ -191,7 +181,7 @@ public class Formulario {
 	public String toString() {
 		return "FormularioModel [id_c=" + id_c + ", nome=" + nome + ", fone=" + fone + ", email=" + email + ", data="
 				+ data + ", cep=" + cep + ", logradouro=" + logradouro + ", bairro=" + bairro + ", localidade="
-				+ localidade + ", uf=" + uf + ", membro=" + membro + ", batizado=" + batizado
+				+ localidade + ", uf=" + uf + ", membro=" + membro
 				+ ", relacionamentosPessoa1=" + relacionamentosPessoa1.stream().map(Relacionamento::getId).collect(Collectors.toList()) + ", relacionamentosPessoa2="
 				+ relacionamentosPessoa2.stream().map(Relacionamento::getId).collect(Collectors.toList()) + "]";
 	}

@@ -4,6 +4,20 @@
 
 - Plataforma para gerenciamento de movimentação de Formularios, Agenda, Inventarios e Cobranças.
 
+## Como inicializar a aplicação
+1. Abra o terminal e navegue até a pasta `docker`.
+2. Execute o comando abaixo para garantir que nenhum container anterior esteja em execução:
+
+   ```bash
+   docker-compose down
+
+3. Em seguida, inicie os serviços com:
+
+  ```bash
+   docker-compose up
+   ```
+4. Com os containers em execução, rode a aplicação normalmente.
+
 ## Ferramentas:
 
 - JDK 8
@@ -64,6 +78,4 @@
 ## TELA INICIAL DO SWAGGER
 ![Swagger](https://github.com/Ernilson/Sibre-3.0/assets/30840118/5b66ab67-df39-440e-ba67-43a0a2cc98cc)
 
-## Comandos Docker:
-- abra um terminal dentro da pasta docker
--  execute o comando: docker-compose up
+

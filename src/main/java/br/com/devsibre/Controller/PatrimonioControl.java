@@ -24,8 +24,7 @@ public class PatrimonioControl {
 
 	 @Autowired
 	    private PatrimonioServiceImpl psl;
-	    
-	    //Metodo para listar todos os cadastros
+
 	    @RequestMapping(method = RequestMethod.GET, value="/lista_patrimonio")
 	    public ModelAndView listarPatrimonio(Model model, Authentication authentication){
 		  addAuthenticationStatusToModel(model, authentication);
@@ -35,8 +34,7 @@ public class PatrimonioControl {
 	      v.addObject("pat", pat);
 	        return v;  
 	    }
-	    
-	     //Metodo para incluir novo cadastro
+
 	    @RequestMapping(method = RequestMethod.GET, value = "/novo_Patrimonio")
 	    public ModelAndView novo_Invent(Model model, Authentication authentication) {
 			addAuthenticationStatusToModel(model, authentication);
@@ -46,15 +44,13 @@ public class PatrimonioControl {
 	        return v;
 	    }
 
-	    //Metodo para salvar debitos
 	    @RequestMapping(method = RequestMethod.POST, value = "/salvar_Patrimonio")
 	    public String salvar_Invent(Patrimonio c, Model model, Authentication authentication) {
 			addAuthenticationStatusToModel(model, authentication);
 	        psl.saveOrUpdate(c);
 	        return "redirect:/novo_Patrimonio";
 	    }
-	    
-	    //Metodo para alterar débitos  
+
 	    @GetMapping("/editePatrimonio/{id_p}")
 	    public String editarInvent(@PathVariable long id_p, Model m, Model model, Authentication authentication) {
 			addAuthenticationStatusToModel(model, authentication);
@@ -63,7 +59,6 @@ public class PatrimonioControl {
 	        return "editaPatrimonio";
 	    }
 
-	    //Metodo para alterar débitos
 	    @RequestMapping(value = "/editsavePatrimonio", method = RequestMethod.POST)
 	    public ModelAndView editsavePatrimonio(@ModelAttribute("patri") Patrimonio patri, Model model, Authentication authentication) {
 			addAuthenticationStatusToModel(model, authentication);
@@ -72,7 +67,6 @@ public class PatrimonioControl {
 	        return new ModelAndView("redirect:/lista_patrimonio");
 	    }
 
-	    //Metodo para excluir dados do débitos
 	    @GetMapping("/apagaPatrimonio/{id_p}")
 	    public String remove_Inventario(@PathVariable long id_p, Model model, Authentication authentication) {
 			addAuthenticationStatusToModel(model, authentication);

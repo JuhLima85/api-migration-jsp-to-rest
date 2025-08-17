@@ -7,121 +7,128 @@ and open the template in the editor.
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="layout/template :: head">
-<title>TODO supply a title</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<title>TODO supply a title</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script
+			src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet"
+		  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-	<header th:replace="layout/template :: header"></header>
+<header th:replace="layout/template :: header"></header>
 
-	<div class="custom-container mt-4">
-		<h1 class="text-center"
-			style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
-			CADASTRO</h1>
-	</div>	
+<div class="custom-container mt-4">
+	<h1 class="text-center"
+		style="background-color: #8ac6d1; padding: 5px; margin-bottom: 0; color: #343A40; font-family: 'Arial', sans-serif;">
+		CADASTRO</h1>
+</div>
 
-	<!-- Centralizar conteúdo -->
-	<div
+<!-- Centralizar conteúdo -->
+<div
 		class="d-flex justify-content-center align-items-center flex-column mt-5">
-		<h5 class="mb-4">
-			<a th:href="@{/formulario}" class="btn btn-success btn-sm mt-5">
-				<span class="fa fa-plus"></span> Novo Cadastro
-			</a>
-		</h5>
-		<!-- Formulário para os radio buttons -->
-		<form id="radioForm">
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" name="membroFilter"
-					id="todos" value="todos" checked> <label
-					class="form-check-label" for="todos">Todos</label>
-			</div>
-			<!-- Apenas Membros -->
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" name="membroFilter"
-					id="membros" value="membros"> <label
-					class="form-check-label" for="membros">Apenas Membros</label>
-			</div>
-			<!-- Apenas Não Membros -->
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" name="membroFilter"
-					id="naoMembros" value="naoMembros"> <label
-					class="form-check-label" for="naoMembros">Apenas Não
-					Membros</label>
-			</div>
-		</form>
+	<h5 class="mb-4">
+		<a th:href="@{/formulario}" class="btn btn-success btn-sm mt-5">
+			<span class="fa fa-plus"></span> Novo Cadastro
+		</a>
+	</h5>
+	<!-- Formulário para os radio buttons -->
+	<form id="radioForm">
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="radio" name="membroFilter"
+				   id="todos" value="todos" checked> <label
+				class="form-check-label" for="todos">Todos</label>
+		</div>
+		<!-- Apenas Membros -->
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="radio" name="membroFilter"
+				   id="membros" value="membros"> <label
+				class="form-check-label" for="membros">Apenas Membros</label>
+		</div>
+		<!-- Apenas Não Membros -->
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="radio" name="membroFilter"
+				   id="naoMembros" value="naoMembros"> <label
+				class="form-check-label" for="naoMembros">Apenas Não
+			Membros</label>
+		</div>
+	</form>
 
-		<form action="#" th:action="@{/listarcadastro}" th:object="${nome}"
-			class="mt-2 mb-4">
-			<div class="input-group mb-3 ">
-				<div class="input-group-append">
-					<button class="btn btn-primary btn-sm" type="submit">
-						<span class="fa fa-search"></span> Pesquisar
-					</button>
-				</div>
-				<input name="nome" id="nome" type="text" class="form-control"
-					placeholder="Informe o nome" aria-label="Informe o nome"
-					th:value="${nome}" aria-describedby="basic-addon2">
-
-				<div class="input-group-append ml-2">
-					<a class="btn btn-secondary btn-sm" href="/listarcadastro"
-						role="button"> <span class="fa fa-search"></span> Limpar
-					</a>
-				</div>
+	<form action="#" th:action="@{/listarcadastro}" th:object="${nome}"
+		  class="mt-2 mb-4">
+		<div class="input-group mb-3 ">
+			<div class="input-group-append">
+				<button class="btn btn-primary btn-sm" type="submit">
+					<span class="fa fa-search"></span> Pesquisar
+				</button>
 			</div>
-		</form>
+			<input name="nome" id="nome" type="text" class="form-control"
+				   placeholder="Informe o nome" aria-label="Informe o nome"
+				   th:value="${nome}" aria-describedby="basic-addon2">
+
+			<div class="input-group-append ml-2">
+				<a class="btn btn-secondary btn-sm" href="/listarcadastro"
+				   role="button"> <span class="fa fa-search"></span> Limpar
+				</a>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="custom-container mt-4">
+	<table class="table">
+		<thead>
+		<tr>
+			<!--
+            <th>ID</th>
+            -->
+			<th>NOME</th>
+			<th>QUADRA</th>
+			<th>BAIRRO</th>
+			<th>TELEFONE</th>
+			<th>EMAIL</th>
+			<th>DATA_NASC</th>
+			<th>MEMBRO</th>
+			<th>HISTÓRICO</th>
+			<!--<a th:href="@{'/pdf'}"style="float:right;"><img th:src="@{/images/Pdf.png}" style="width:40px; margin-left:10px;"> -->
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="cad:${cadastro}">
+			<!--
+            <td th:text="${cad.id_c}"></td>
+            -->
+			<td th:text="${cad.nome}"></td>
+			<td th:text="${cad.logradouro}"></td>
+			<td th:text="${cad.bairro}"></td>
+			<td th:text="${cad.fone}"></td>
+			<td th:text="${cad.email}"></td>
+			<td th:text="${cad.data}"></td>
+			<td><span th:if="${cad.membro}">Sim</span> <span
+					th:if="${not cad.membro}">Não</span></td>
+			<td><a th:href="@{'/historico/' + ${cad.id_c}}"
+				   class="btn btn-info">Histórico</a></td>
+		</tr>
+		<!-- Linha para exibir o total -->
+		<tr>
+			<td colspan="7"></td>
+			<td><strong>Total</strong></td>
+			<td th:text="${count}"></td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="action-buttons mt-2 mb-5">
+		<a href="#" id="gerarPdfBtn" class="btn btn-primary btn-sm">
+			<span class="fa fa-file-pdf"></span> Gerar PDF
+		</a>
 	</div>
-	<div class="custom-container mt-4">
-		<table class="table">
-			<thead>
-				<tr>
-					<!--                  
-                    <th>ID</th>
-                    -->
-					<th>NOME</th>
-					<th>QUADRA</th>
-					<th>BAIRRO</th>
-					<th>TELEFONE</th>
-					<th>EMAIL</th>
-					<th>DATA_NASC</th>
-					<th>MEMBRO</th>
-					<th>HISTÓRICO</th>
-					<th><a th:href="@{'/pdf'}">PDF</a></th>
-					<!--<a th:href="@{'/pdf'}"style="float:right;"><img th:src="@{/images/Pdf.png}" style="width:40px; margin-left:10px;"> -->
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="cad:${cadastro}">
-					<!--
-                    <td th:text="${cad.id_c}"></td>
-                    -->
-					<td th:text="${cad.nome}"></td>
-					<td th:text="${cad.logradouro}"></td>
-					<td th:text="${cad.bairro}"></td>
-					<td th:text="${cad.fone}"></td>
-					<td th:text="${cad.email}"></td>
-					<td th:text="${cad.data}"></td>
-					<td><span th:if="${cad.membro}">Sim</span> <span
-						th:if="${not cad.membro}">Não</span></td>
-					<td><a th:href="@{'/historico/' + ${cad.id_c}}"
-						class="btn btn-info">Histórico</a></td>
-				</tr>
-				<!-- Linha para exibir o total -->
-				<tr>
-					<td colspan="7"></td>
-					<td><strong>Total</strong></td>
-					<td th:text="${count}"></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<br>
-	<br>
-	<br>
-	<script>
+
+
+
+</div>
+<br>
+<br>
+<br>
+<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			var membroFilter = localStorage.getItem('membroFilter') || 'todos'; // Recupera do localStorage ou define como 'todos' se não existir
 			console.log('membroFilter:', membroFilter);
@@ -147,14 +154,27 @@ and open the template in the editor.
 					});
 
 			console.log('membroFilter Final:', membroFilter);
-		});
+
+			 // Adiciona a lógica para o botão "Gerar PDF" - usamos membroFilter que foi salvo no localStorage
+	        var gerarPdfBtn = document.getElementById('gerarPdfBtn');
+
+	        gerarPdfBtn.addEventListener('click', function() {
+	            // Construir a URL do PDF com membroFilter
+	            var pdfUrl = '/pdf?membroFilter=' + encodeURIComponent(membroFilter);
+
+	            // Redirecionar para a URL do PDF
+	            window.location.href = pdfUrl;
+	        });
+	    });
 	</script>
+
 </body>
 <style>
 .custom-container {
 	width: 90%;
 	margin: 0 auto; /* Centraliza a div na página */
 }
+
 </style>
 <footer th:replace="layout/template :: footer"></footer>
 </html>

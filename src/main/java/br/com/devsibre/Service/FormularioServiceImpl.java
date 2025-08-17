@@ -30,7 +30,7 @@ public class FormularioServiceImpl implements FormularioService {
 		this.grauDeParentescoRepository = grauDeParentescoRepository;
 	}
 
-//lista parentesco - busca todos os cadastros
+	//lista parentesco - busca todos os cadastros
 	@Override
 	public List<Formulario> listAll() {
 		List<Formulario> cm = new ArrayList<>();

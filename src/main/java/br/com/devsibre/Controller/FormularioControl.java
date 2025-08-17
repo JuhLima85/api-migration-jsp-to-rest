@@ -260,26 +260,24 @@ public class FormularioControl {
 		return "/edita_Cadastro";
 	}
 
-	@GetMapping(value = "/pdf")
-	public void createPdf(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+	@GetMapping("/pdf")
+	public void createPdf(HttpServletRequest request, HttpServletResponse response, @RequestParam(name = "membroFilter", required = false, defaultValue = "todos") String membroFilter, Model model, Authentication authentication) {
 		addAuthenticationStatusToModel(model, authentication);
-		List<Formulario> cad = service.listAll();
-		boolean isFlag = cadreport.creatPdf(cad, context, request, response);
+		List<Formulario> cad;
+		// Lógica para filtrar a lista com base no membroFilter
+		if ("membros".equals(membroFilter)) {
+			cad = service.listarApenasMembros();
+		} else if ("naoMembros".equals(membroFilter)) {
+			cad = service.listarApenasNaoMembros();
+		} else {
+			cad = service.listAll();
+		}
+
+		boolean isFlag = cadreport.creatPdf(cad, context, request, response, membroFilter);
 		if (isFlag) {
 			String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cad" + ".pdf");
 			filedownload(fullPath, response, "cad.pdf");
 		}
-	}
-
-	@GetMapping(value = "/Exls")
-	public void createExcel(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
-		addAuthenticationStatusToModel(model, authentication);
-		List<Formulario> cad = service.listAll();
-		boolean isFlag = cadreport.createExcel(cad, context, request, response);
-//        if (isFlag) {
-//            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cad" + ".pdf");
-//            filedownload(fullPath, response, "cad.pdf");
-//        }
 	}
 
 	private String montarTabelaHtml(List<Relacionamento> relacionamentos) {
