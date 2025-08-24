@@ -1,0 +1,9 @@
+package br.com.devsibre.error;
+
+public class BusinessException extends RuntimeException {
+    public BusinessException(String msg) { super(msg); }
+
+    public static BusinessException dadoDuplicado() {
+        return new BusinessException("Já existe um cadastro com este telefone");
+    }
+}

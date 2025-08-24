@@ -1,9 +1,11 @@
 package br.com.devsibre.Domain.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+//import javax.persistence.*;
+//import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Entity

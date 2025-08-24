@@ -1,6 +1,8 @@
 package br.com.devsibre.Domain.Entity;
 
-import javax.persistence.*;
+//import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity

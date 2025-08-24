@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.ServletContext;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.BaseColor;
@@ -33,7 +35,7 @@ public class Cantina_reports implements Cantina_Report_Service{
 
 	@Override
 	public boolean creatPdf2(List<Cantina> cant, ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) {
+                             HttpServletResponse response) {
 		Document document = new Document(PageSize.A4, 15, 15, 45, 30);
 
         try {

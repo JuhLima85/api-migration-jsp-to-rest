@@ -3,10 +3,11 @@ package br.com.devsibre.Domain.Entity;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
+//import javax.persistence.ManyToMany;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import br.com.devsibre.Domain.Entity.Usuario;

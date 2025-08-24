@@ -52,12 +52,11 @@ public class FormularioServiceImpl implements FormularioService {
 	}
 
 	@Override
-	public boolean alterar(Formulario dto) {
+	public Formulario alterar(Formulario dto) {
 		try {
-			formularioRepo.save(dto);
-			return true;
+			return formularioRepo.save(dto);
 		} catch (Exception e) {
-			return false;
+			throw new RuntimeException("Erro ao atualizar formulário", e);
 		}
 	}
 
@@ -165,5 +164,7 @@ public class FormularioServiceImpl implements FormularioService {
 
 		return descricao;
 	}
+
+
 
 }

@@ -13,7 +13,7 @@ public interface FormularioService {
 
 	List<Formulario> findByNomeContainingIgnoreCase(String nome);
 
-	boolean alterar(Formulario dto);
+	Formulario alterar(Formulario dto);
 
 	Formulario getId(Long id);
 

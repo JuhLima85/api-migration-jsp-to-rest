@@ -3,12 +3,24 @@ package br.com.devsibre.Domain.Entity;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
+//import javax.persistence.JoinColumn;
+//import javax.persistence.JoinTable;
+//import javax.persistence.ManyToMany;
 
+//execute os sql abaixo para inserir o usuario nas tabelas:
+//		-- TABELA USUARIO
+//		insert into usuario (login,email,senha)values('admin','admin@sibre','$2a$10$0YWMMxOtZFwc1NlflrGDXuESaxO2EFRn5Dr5y/IJpP7FcVtmhOeqS');
+//		OBS: a senha criptografada é sibre2020
+//
+//		-- TABELA ROLE
+//		insert into roles(nome_role)values('ROLE_ADMIN');
+//
+//		-- TABELA USUARIOS_ROLES
+//		insert into usuarios_roles(usuario_id, role_id)values('admin','ROLE_ADMIN');
+
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

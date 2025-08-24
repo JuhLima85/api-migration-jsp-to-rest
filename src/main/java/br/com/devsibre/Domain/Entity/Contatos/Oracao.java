@@ -1,6 +1,8 @@
 package br.com.devsibre.Domain.Entity.Contatos;
 
-import javax.persistence.*;
+//import javax.persistence.*;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_oracao")

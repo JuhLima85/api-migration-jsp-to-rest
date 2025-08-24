@@ -1,8 +1,9 @@
 package br.com.devsibre.Domain.Entity.Contatos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
+//import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity

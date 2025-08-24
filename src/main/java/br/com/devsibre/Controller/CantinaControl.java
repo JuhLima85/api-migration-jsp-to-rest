@@ -6,9 +6,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.ServletContext;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
 
 import br.com.devsibre.UtilsReports.Cantina;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +36,8 @@ public class CantinaControl {
 	    @Autowired
 	    private Cantina_reports candreport;
 
-	    @Autowired
-	    private ServletContext context;
+//	    @Autowired
+//	    private ServletContext context;
 	    
 	    //Metodo para listar debitos
 	    @RequestMapping(method = RequestMethod.GET, value="/listacantina")
@@ -113,46 +113,46 @@ public class CantinaControl {
 	        return "redirect:/lista_pagos";
 	    }
 	    
-	    @GetMapping(value = "/pdf_cantina")
-	    public void createPdf(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
-			addAuthenticationStatusToModel(model, authentication);
-	        List<Cantina> cant = cadService.listAll();
-	        boolean isFlag = candreport.creatPdf2(cant, context, request, response);
-	        if (isFlag) {
-	            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cant" + ".pdf");
-	            filedownload(fullPath, response, "cant.pdf");
-	        }
-	    }
-	    
-	     @GetMapping(value = "/Exls_cantina")
-	    public void createExcel2(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
-			addAuthenticationStatusToModel(model, authentication);
-	        List<Cantina> cant = cadService.listAll();
-	        boolean isFlag = candreport.createExcel2(cant, context, request, response);
-	    }
-
-	    private void filedownload(String fullPath, HttpServletResponse response, String fileName) {
-	        File file = new File(fullPath);
-
-	        final int BUFFER_SIZE = 4096;
-	        if (file.exists()) {
-	            try {
-	                FileInputStream inputStream = new FileInputStream(file);
-	                String mimeType = context.getMimeType(fullPath);
-	                response.setContentType(mimeType);
-	                response.setHeader("content-disposition", "attachment; filename=" + fileName);
-	                OutputStream outputStream = response.getOutputStream();
-
-	                byte[] buffer = new byte[BUFFER_SIZE];
-	                int bytesRead = -1;
-	                while ((bytesRead = inputStream.read(buffer)) != -1) {
-	                    outputStream.write(buffer, 0, bytesRead);
-	                }
-	                inputStream.close();
-	                outputStream.close();
-	                file.delete();
-	            } catch (Exception e) {
-	            }
-	        }
-	    }
+//	    @GetMapping(value = "/pdf_cantina")
+//	    public void createPdf(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+//			addAuthenticationStatusToModel(model, authentication);
+//	        List<Cantina> cant = cadService.listAll();
+//	        boolean isFlag = candreport.creatPdf2(cant, context, request, response);
+//	        if (isFlag) {
+//	            String fullPath = request.getServletContext().getRealPath("/resources/reports/" + "cant" + ".pdf");
+//	            filedownload(fullPath, response, "cant.pdf");
+//	        }
+//	    }
+//
+//	     @GetMapping(value = "/Exls_cantina")
+//	    public void createExcel2(HttpServletRequest request, HttpServletResponse response, Model model, Authentication authentication) {
+//			addAuthenticationStatusToModel(model, authentication);
+//	        List<Cantina> cant = cadService.listAll();
+//	        boolean isFlag = candreport.createExcel2(cant, context, request, response);
+//	    }
+//
+//	    private void filedownload(String fullPath, HttpServletResponse response, String fileName) {
+//	        File file = new File(fullPath);
+//
+//	        final int BUFFER_SIZE = 4096;
+//	        if (file.exists()) {
+//	            try {
+//	                FileInputStream inputStream = new FileInputStream(file);
+//	                String mimeType = context.getMimeType(fullPath);
+//	                response.setContentType(mimeType);
+//	                response.setHeader("content-disposition", "attachment; filename=" + fileName);
+//	                OutputStream outputStream = response.getOutputStream();
+//
+//	                byte[] buffer = new byte[BUFFER_SIZE];
+//	                int bytesRead = -1;
+//	                while ((bytesRead = inputStream.read(buffer)) != -1) {
+//	                    outputStream.write(buffer, 0, bytesRead);
+//	                }
+//	                inputStream.close();
+//	                outputStream.close();
+//	                file.delete();
+//	            } catch (Exception e) {
+//	            }
+//	        }
+//	    }
 }

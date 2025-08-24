@@ -1,6 +1,8 @@
 package br.com.devsibre.UtilsReports;
 
-import javax.persistence.*;
+//import javax.persistence.*;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cantina")

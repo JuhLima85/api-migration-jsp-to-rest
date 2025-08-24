@@ -5,13 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpSession;
+//import javax.persistence.EntityNotFoundException;
+//import javax.servlet.http.HttpSession;
 
 import br.com.devsibre.Domain.Entity.DTO.RelacionamentoDTO;
 import br.com.devsibre.Domain.Entity.Formulario;
 import br.com.devsibre.Domain.Entity.GrauDeParentesco;
 import br.com.devsibre.Domain.Entity.Relacionamento;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,22 +69,17 @@ public class RelacionamentoServiceImpl implements RelacionamentoService {
 	 * @throws EntityNotFoundException Se o Relacionamento com o ID especificado não for encontrado.
 	 */
 	@Transactional
-	public void atualizarGrauDeParentesco(Long relacionamentoId, int novoGrauParentesco) throws EntityNotFoundException {	   
-	    Optional<Relacionamento> relacionamentoOptional = relacionamentoRepository.findById(relacionamentoId);
-	    
-	    if (relacionamentoOptional.isPresent()) {
-	        Relacionamento relacionamento = relacionamentoOptional.get();
-	       
-	        GrauDeParentesco grauDeParentesco = relacionamento.getGrauDeParentesco();
-	       
-	        grauDeParentesco.setGrau(novoGrauParentesco);	        
-	        
-	        formularioServiceImpl.buscarGrauDeParentescoPorGrau(novoGrauParentesco, relacionamento);
-	      
-	        relacionamentoRepository.save(relacionamento);
-	    } else {
-	        throw new EntityNotFoundException("Relacionamento não encontrado com o ID: " + relacionamentoId);
-	    }
+	public void atualizarGrauDeParentesco(Long relacionamentoId, int novoGrauParentesco) throws EntityNotFoundException {
+		Optional<Relacionamento> relacionamentoOptional = relacionamentoRepository.findById(relacionamentoId);
+
+		if (relacionamentoOptional.isPresent()) {
+			Relacionamento relacionamento = relacionamentoOptional.get();
+
+			relacionamento.getGrauDeParentesco().setGrau(novoGrauParentesco);
+			relacionamentoRepository.save(relacionamento);
+		} else {
+			throw new EntityNotFoundException("Relacionamento não encontrado com o ID: " + relacionamentoId);
+		}
 	}
 
 	public void deletarRelacionamento(Long id) {
@@ -117,10 +114,10 @@ public class RelacionamentoServiceImpl implements RelacionamentoService {
 		for (Relacionamento relacionamento : rela) {
 			String nomeFamiliar = relacionamento.getPessoa2().getNome();
 			String grauParentesco = relacionamento.getGrauDeParentesco().getDescricao();
-			Long idRelacionamento = relacionamento.getId();
+			Long idRelacionamento = relacionamento.getIdRelacionamento();
 			
 			RelacionamentoDTO dto = new RelacionamentoDTO();
-			dto.setId(idRelacionamento);
+			dto.setIdRelacionamento(idRelacionamento);
 			dto.setNomeFamiliar(nomeFamiliar);
 			dto.setGrauParentesco(grauParentesco);
 
@@ -132,33 +129,9 @@ public class RelacionamentoServiceImpl implements RelacionamentoService {
 	/*
 	 * Listar cadastro por id e seus relaciomentos
 	 */
-	public List<RelacionamentoDTO> listarHistorico(Long idPessoa, HttpSession session) {		
-		CadastroDTO cadastroPessoa = formularioRepo.findCadastroDTOById(idPessoa);	
+	public List<RelacionamentoDTO> listarHistorico(Long idPessoa, HttpSession session) {
+		CadastroDTO cadastroPessoa = formularioRepo.findCadastroDTOById(idPessoa);
 		session.setAttribute("historicoDTO", cadastroPessoa);
-		
-		List<RelacionamentoDTO> familiarDTO = new ArrayList<>();
-		List<Relacionamento> relacionamentosPessoa1 = relacionamentoRepository.findAllByPessoa1Id(idPessoa);
-		List<Relacionamento> relacionamentosPessoa2 = relacionamentoRepository.findAllByPessoa2Id(idPessoa);
-		
-	    List<Relacionamento> relacionamentos = new ArrayList<>();
-	    relacionamentos.addAll(relacionamentosPessoa1);
-	    relacionamentos.addAll(relacionamentosPessoa2);    
-	  
-	    for (Relacionamento relacionamento : relacionamentos) {
-	        RelacionamentoDTO relaTDO = new RelacionamentoDTO();
-	        relaTDO.setId(relacionamento.getId());
-	      
-	        if (idPessoa.equals(relacionamento.getPessoa1().getId_c())) {
-	            relaTDO.setNomeFamiliar(relacionamento.getPessoa2().getNome());
-	        } else {
-	            relaTDO.setNomeFamiliar(relacionamento.getPessoa1().getNome());
-	        }
-
-	        relaTDO.setGrauParentesco(relacionamento.getGrauDeParentesco().getDescricao());
-
-	        familiarDTO.add(relaTDO);
-	    }
-
-		return familiarDTO;
+		return relacionamentoRepository.listarHistoricoDTO(idPessoa);
 	}
 }

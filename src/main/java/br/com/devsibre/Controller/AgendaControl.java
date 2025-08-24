@@ -3,7 +3,7 @@ package br.com.devsibre.Controller;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.validation.Valid;
+//import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -92,18 +92,18 @@ public class AgendaControl {
 		return "agendaForm";
 	}
 
-	@RequestMapping(value = "/newagenda", method = RequestMethod.POST)
-	public String saveAgenda(@Valid Agenda agendas, BindingResult result, RedirectAttributes attributes, Model model, Authentication authentication) {
-		addAuthenticationStatusToModel(model, authentication);
-		if (result.hasErrors()) {
-			attributes.addFlashAttribute("mensagem", "Verifique se os campos obrigatórios foram preenchidos!");
-			return "redirect:/newagenda";
-		}
-
-		agendas.setData(LocalDate.now());
-		Pservice.saveOrUpdate(agendas);
-		return "redirect:/agendas";
-	}
+//	@RequestMapping(value = "/newagenda", method = RequestMethod.POST)
+//	public String saveAgenda(@Valid Agenda agendas, BindingResult result, RedirectAttributes attributes, Model model, Authentication authentication) {
+//		addAuthenticationStatusToModel(model, authentication);
+//		if (result.hasErrors()) {
+//			attributes.addFlashAttribute("mensagem", "Verifique se os campos obrigatórios foram preenchidos!");
+//			return "redirect:/newagenda";
+//		}
+//
+//		agendas.setData(LocalDate.now());
+//		Pservice.saveOrUpdate(agendas);
+//		return "redirect:/agendas";
+//	}
 
 	@GetMapping("/remover/{id}")
 	public String excluir(@PathVariable long id,  Model model, Authentication authentication) {

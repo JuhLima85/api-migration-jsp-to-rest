@@ -1,5 +1,6 @@
 package br.com.devsibre.Domain.Repository;
 
+import br.com.devsibre.Domain.Entity.DTO.RelacionamentoDTO;
 import br.com.devsibre.Domain.Entity.Formulario;
 import br.com.devsibre.Domain.Entity.Relacionamento;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,7 +51,24 @@ public interface RelacionamentoRepository extends JpaRepository<Relacionamento, 
 	     */
 	 @Modifying
 	    @Query("DELETE FROM Relacionamento r WHERE r.pessoa1.id = :pessoaId")
-	    void deleteByPessoa1Id(@Param("pessoaId") Long pessoaId); 
-	
- 
+	    void deleteByPessoa1Id(@Param("pessoaId") Long pessoaId);
+
+
+	@Query("""
+        select new br.com.devsibre.Domain.Entity.DTO.RelacionamentoDTO(
+            r.idRelacionamento,
+            p1.id_c,
+            p2.id_c,
+            case when :idPessoa = p1.id_c then p2.nome else p1.nome end,
+            r.grauDeParentesco.descricao
+        )
+        from Relacionamento r
+            join r.pessoa1 p1
+            join r.pessoa2 p2
+        where p1.id_c = :idPessoa or p2.id_c = :idPessoa
+        order by 4 asc
+    """)
+	List<RelacionamentoDTO> listarHistoricoDTO(@Param("idPessoa") Long idPessoa);
 }
+
+
