@@ -29,37 +29,38 @@ public class RelacionamentosController {
     @Autowired
     private RelacionamentoService relacionamentoService;
 
+    /**
+     * Recupera um cadastro e seu histórico de relacionamentos a partir do ID informado.
+     * Também manipula dados temporários armazenados em sessão.
+     *
+     * @param id      Identificador do cadastro
+     * @param session Sessão HTTP onde os dados temporários podem estar armazenados
+     * @return Cadastro com histórico ou 404 se não encontrado
+     */
     @GetMapping("/historico/{id}")
-    public ResponseEntity<HistoricoDTO> listarCadastroERelacionamentos(
-            @PathVariable Long id,
-            HttpSession session) {
-
-        // carrega lista
+    public ResponseEntity<HistoricoDTO> listarCadastroERelacionamentos(@PathVariable Long id, HttpSession session) {
         List<RelacionamentoDTO> relacionamentos =
                 relacionamentoService.listarHistorico(id, session);
 
-        // obtém o cadastro da sessão (mesma origem do seu código atual)
+        // Recupera o cadastro armazenado na sessão
         CadastroDTO cadastro = (CadastroDTO) session.getAttribute("historicoDTO");
 
-        Formulario valoresTemporarios = (Formulario) session.getAttribute("valoresTemporarios"); // <-- recupera
-
+        // Recupera ou inicializa o formulário de valores temporários
+        Formulario valoresTemporarios = (Formulario) session.getAttribute("valoresTemporarios");
         if (cadastro != null) {
-            // garante que não seja null
             if (valoresTemporarios == null) {
                 valoresTemporarios = new Formulario();
-            }  // atualiza valores temporários
+            }
             valoresTemporarios.setId_c(cadastro.getIdPessoa());
             valoresTemporarios.setNome(cadastro.getPessoaNome());
             session.setAttribute("valoresTemporarios", valoresTemporarios);
 
-            // formata data ISO -> dd/MM/yyyy (se vier como String ISO: 2025-08-20)
             if (cadastro.getPessoaData() != null && !cadastro.getPessoaData().isEmpty()) {
                 LocalDate data = LocalDate.parse(cadastro.getPessoaData(), DateTimeFormatter.ISO_DATE);
                 DateTimeFormatter br = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 cadastro.setPessoaData(data.format(br));
             }
         }
-
         // 404 se nada encontrado
         if ((relacionamentos == null || relacionamentos.isEmpty()) && cadastro == null) {
             return ResponseEntity.notFound().build();
@@ -71,8 +72,7 @@ public class RelacionamentosController {
 
     @PostMapping
     public List<RelacionamentoDTO> vincular(@Valid @RequestBody VincularRelacionamentoDTO req, HttpSession session) {
-        Formulario valoresTemporarios =
-                (Formulario) session.getAttribute("valoresTemporarios"); // <-- recupera
+        Formulario valoresTemporarios = (Formulario) session.getAttribute("valoresTemporarios"); // <-- recupera da sessão
         var p1 = service.getId(valoresTemporarios.getId_c());
         var p2 = service.getId(req.getPessoa2Id());
         var grau = service.buscarGrauDeParentescoPorGrau(req.getGrauParentesco(), null);
@@ -117,10 +117,7 @@ public class RelacionamentosController {
     }
 
     @DeleteMapping("/{relacionamentoId}")
-    public ResponseEntity<HistoricoDTO> deletar(@PathVariable Long relacionamentoId,
-                                                @RequestParam(required = false) Long idPessoa,
-                                                HttpSession session) {
- System.out.println(" teste");
+    public ResponseEntity<HistoricoDTO> deletar(@PathVariable Long relacionamentoId, @RequestParam(required = false) Long idPessoa, HttpSession session) {
         // 1) se idPessoa não vier, tenta inferir (sessão ou pelo relacionamento)
         if (idPessoa == null) {
             Formulario tmp = (Formulario) session.getAttribute("valoresTemporarios");
@@ -129,14 +126,11 @@ public class RelacionamentosController {
             }
         }
 
-        // valida
         if (idPessoa == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        // 2) deleta o relacionamento
         relacionamentoService.deletarRelacionamento(relacionamentoId);
-
         // 3) recarrega o histórico (preenche também historicoDTO na sessão, como hoje)
         List<RelacionamentoDTO> relacionamentos = relacionamentoService.listarHistorico(idPessoa, session);
 

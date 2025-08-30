@@ -11,16 +11,13 @@ import br.com.devsibre.error.BusinessException;
 import br.com.devsibre.error.NotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import br.com.devsibre.Service.FormularioServiceImpl;
-import br.com.devsibre.UtilsReports.Formulario_Report;
 
 @RestController
 @RequestMapping("/formulario")
-//@RequiredArgsConstructor
 @Validated
 public class FormularioController {
 	@Autowired
@@ -33,7 +30,7 @@ public class FormularioController {
 	public Formulario salvar(@Valid @RequestBody Formulario formulario, HttpSession session) {
 		var resp = service.saveOrUpdate(formulario);
 
-		// Salvo temporariamente na sessão o id e nome da pessoa1 temporariamente - usado em novoCadastro e vincularParente
+		// Salvo temporariamente na sessão o id e nome da pessoa1 temporariamente - usado em RelacionamentosController
 		Formulario tmp = new Formulario();
 		tmp.setId_c(resp.getFormulario().getId_c());
 		tmp.setNome(resp.getFormulario().getNome());
