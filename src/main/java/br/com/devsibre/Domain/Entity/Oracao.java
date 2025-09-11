@@ -1,4 +1,4 @@
-package br.com.devsibre.Domain.Entity.Contatos;
+package br.com.devsibre.Domain.Entity;
 
 //import javax.persistence.*;
 

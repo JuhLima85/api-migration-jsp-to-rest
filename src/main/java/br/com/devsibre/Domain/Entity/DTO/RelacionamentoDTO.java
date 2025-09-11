@@ -6,11 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class RelacionamentoDTO {
-	private Long idRelacionamento;
-	private Long idPessoa1;
-	private Long idPessoa2;
+	private Long id;
 	private String nomeFamiliar;
-	private String grauParentesco;
+	private String tipo;
+
+	public RelacionamentoDTO(Long id, String nomeFamiliar, String tipo) {
+		this.id = id;
+		this.nomeFamiliar = nomeFamiliar;
+		this.tipo = tipo;
+	}
 }

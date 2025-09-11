@@ -1,6 +1,6 @@
 package br.com.devsibre.Service;
 
-import br.com.devsibre.Domain.Entity.Contatos.Oracao;
+import br.com.devsibre.Domain.Entity.Oracao;
 import br.com.devsibre.Domain.Repository.OracaoRepository;
 import org.springframework.stereotype.Service;
 

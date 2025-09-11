@@ -1,6 +1,6 @@
 package br.com.devsibre.Controller;
 
-import br.com.devsibre.Domain.Entity.Contatos.Oracao;
+import br.com.devsibre.Domain.Entity.Oracao;
 import br.com.devsibre.Service.OracaoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
