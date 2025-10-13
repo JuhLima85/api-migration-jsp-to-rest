@@ -39,4 +39,15 @@ public class PessoaController {
                                @RequestParam String tipo) {
         return pessoaService.criarVinculo(id1, id2, tipo);
     }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id) {
+        pessoaService.deletar(id);
+    }
+
+    @PutMapping("/{id}")
+    public Pessoa atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa) {
+        Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoa);
+        return pessoaAtualizada;
+    }
 }

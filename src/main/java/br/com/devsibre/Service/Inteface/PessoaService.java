@@ -9,4 +9,7 @@ public interface PessoaService {
     List<Pessoa> listarTodas();
     Pessoa buscarPorId(Long id);
     Pessoa criarVinculo(Long id1, Long id2, String tipo);
+    void deletar(Long id);
+    Pessoa atualizar(Long id, Pessoa pessoaAtualizada);
+
 }

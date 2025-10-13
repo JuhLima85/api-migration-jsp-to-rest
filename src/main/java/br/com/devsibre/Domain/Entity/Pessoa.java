@@ -25,10 +25,11 @@ public class Pessoa {
     private String fone;
     @Column(length = 40)
     private String email;
-    private String data;
+    private String dataNascimento;
+    private String dataInicioMembresia;
+    private String dataCadastro;
     private String cep;
     private String logradouro;
-    private String bairro;
     private String localidade;
     private String uf;
     private boolean membro;

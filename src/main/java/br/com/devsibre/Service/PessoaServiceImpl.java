@@ -50,4 +50,27 @@ public class PessoaServiceImpl implements PessoaService {
 
         return pessoaRepository.save(p1);
     }
+
+    @Override
+    public void deletar(Long id) {
+        Pessoa pessoa = buscarPorId(id);
+        pessoaRepository.delete(pessoa);
+    }
+
+    @Override
+    public Pessoa atualizar(Long id, Pessoa pessoaAtualizada) {
+        Pessoa pessoaExistente = buscarPorId(id);
+
+        pessoaExistente.setNome(pessoaAtualizada.getNome());
+        pessoaExistente.setFone(pessoaAtualizada.getFone());
+        pessoaExistente.setEmail(pessoaAtualizada.getEmail());
+        pessoaExistente.setDataNascimento(pessoaAtualizada.getDataNascimento());
+        pessoaExistente.setCep(pessoaAtualizada.getCep());
+        pessoaExistente.setLogradouro(pessoaAtualizada.getLogradouro());
+        pessoaExistente.setLocalidade(pessoaAtualizada.getLocalidade());
+        pessoaExistente.setMembro(pessoaAtualizada.isMembro());
+        pessoaExistente.setDataInicioMembresia(pessoaAtualizada.getDataInicioMembresia());
+
+        return pessoaRepository.save(pessoaExistente);
+    }
 }
