@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OracaoService {
+public class OracaoServiceImpl {
 
     private OracaoRepository oracaoRepository;
 
-    public OracaoService(OracaoRepository oracaoRepository){
+    public OracaoServiceImpl(OracaoRepository oracaoRepository){
         this.oracaoRepository = oracaoRepository;
     }
 
@@ -33,12 +33,12 @@ public class OracaoService {
     public Oracao getById(Long id){
         return oracaoRepository.findById(id).orElse(null);
     }
+
     public void delete(Long id){
         Optional<Oracao> ct = this.oracaoRepository.findById(id);
         if (!ct.isPresent()) {
             throw new RuntimeException("O id não foi encontrado");
         }
         oracaoRepository.deleteById(id);
-
     }
 }
