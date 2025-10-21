@@ -1,5 +1,7 @@
 package br.com.devsibre.error;
 
+import br.com.devsibre.Domain.Entity.DTO.KeycloakUserDTO;
+
 public class BusinessException extends RuntimeException {
     public BusinessException(String msg) { super(msg); }
 
@@ -9,5 +11,9 @@ public class BusinessException extends RuntimeException {
 
     public static BusinessException relacionamentoDuplicado() {
         return new BusinessException("Esse vínculo já existe.");
+    }
+
+    public static BusinessException usuarioDuplicado(String user) {
+        return new BusinessException("Já existe um usuário com o username: " + user);
     }
 }

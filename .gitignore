@@ -29,3 +29,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignorar volumes e arquivos temporários do MySQL
+docker/volume_mysql/
+docker/init/
+docker/keycloak/
+

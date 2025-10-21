@@ -1,28 +1,74 @@
-version: '3'
+version: '3.8'
+
 services:
-  Devsibre:
-    build:
-      context: ./
-      dockerfile: ./Dockerfile
-    image: devsibre
-    ports:
-        - '8080:8080'
-        - '5005:5005'
-        
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:8.0
+    restart: always
     environment:
-      - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
-      - PROFILE=dev
-    links:
-      - db
-  db:
-    image: mysql:5.6
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: devsibre
+      MYSQL_USER: devsibre_user
+      MYSQL_PASSWORD: devsibre_pass
+      TZ: America/Sao_Paulo
     ports:
-      - '3309:3309'
-          
-    environment:
-      - MYSQL_ROOT_HOT=%
-      - MYSQL_DATABASE=devsibre
-      - MYSQL_ROOT_PASSWORD=root
-          
+      - "3309:3306"
     volumes:
       - ./docker/volume_mysql:/var/lib/mysql
+      - ./docker/init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak-app
+    command: ["start-dev", "--import-realm", "--hostname-strict=false"]
+    environment:
+      KC_DB: mysql
+      KC_DB_URL_HOST: mysql-db
+      KC_DB_URL_DATABASE: keycloak_db
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_pass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_SPI_FRAME_ANCESTORS: "'self' http://localhost:4200"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
+      KC_PROXY: "edge"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_ADDRESS_FORWARDING: "true"
+    volumes:
+      - ./docker/keycloak/import:/opt/keycloak/data/import
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+
+  devsibre-api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: devsibre
+    container_name: devsibre-api
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      PROFILE: dev
+      ADDITIONAL_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: devsibre
+      DB_USERNAME: devsibre_user
+      DB_PASSWORD: devsibre_pass
+    depends_on:
+      - mysql-db
+      - keycloak
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
