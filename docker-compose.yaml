@@ -54,15 +54,15 @@ services:
     container_name: devsibre-api
     ports:
       - "8080:8080"
-      - "5005:5005"
+      - "5005:5005"  # porta do debug remoto
     environment:
-      PROFILE: dev
-      ADDITIONAL_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
-      DB_HOST: mysql-db
-      DB_PORT: 3306
-      DB_NAME: devsibre
-      DB_USERNAME: devsibre_user
-      DB_PASSWORD: devsibre_pass
+      - PROFILE=dev
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+      - DB_HOST=mysql-db
+      - DB_PORT=3306
+      - DB_NAME=devsibre
+      - DB_USERNAME=devsibre_user
+      - DB_PASSWORD=devsibre_pass
     depends_on:
       - mysql-db
       - keycloak

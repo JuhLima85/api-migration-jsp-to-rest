@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,10 @@ public class KeycloakAdminServiceImpl {
             throw new RuntimeException(BusinessException.usuarioDuplicado(user.getUsername()));
         }
 
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            throw new IllegalArgumentException("Pelo menos um papel deve ser informado para o usuário.");
+        }
+
         // Define corpo do usuário conforme API do Keycloak
         Map<String, Object> userBody = Map.of(
                 "username", user.getUsername(),
@@ -66,17 +71,13 @@ public class KeycloakAdminServiceImpl {
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            System.out.println("✅ Usuário criado com sucesso no Keycloak! Status: " + response.getStatusCode());
+            return;
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao criar usuário no Keycloak");
-            System.err.println("Status: " + e.getStatusCode());
-            System.err.println("Headers: " + e.getResponseHeaders());
-            System.err.println("Body: " + e.getResponseBodyAsString());
-            throw new RuntimeException("Falha ao criar usuário: " + e.getResponseBodyAsString(), e);
-        } catch (Exception e) {
-            System.err.println("⚠️ Erro inesperado ao criar usuário: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Erro inesperado ao criar usuário", e);
+            if (e.getStatusCode() == HttpStatus.CONFLICT) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um usuário com este e-mail ou nome de usuário.");
+            }
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao criar usuário: " + e.getResponseBodyAsString());
         }
     }
 
@@ -91,6 +92,7 @@ public class KeycloakAdminServiceImpl {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
+            // 1️⃣ Busca todos os usuários
             ResponseEntity<List> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
@@ -99,17 +101,78 @@ public class KeycloakAdminServiceImpl {
             );
 
             List<Map<String, Object>> usuarios = response.getBody();
-            System.out.println("📋 Total de usuários encontrados: " + (usuarios != null ? usuarios.size() : 0));
 
             return usuarios;
 
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao listar usuários no Keycloak:");
-            System.err.println("Status: " + e.getStatusCode());
-            System.err.println("Body: " + e.getResponseBodyAsString());
             throw new RuntimeException("Falha ao listar usuários: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            System.err.println("⚠️ Erro inesperado ao listar usuários: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Erro inesperado ao listar usuários", e);
+        }
+    }
+
+    public List<KeycloakUserDTO> listarUsuariosComRoles() {
+        String token = obterTokenAdmin();
+        String urlUsuarios = keycloakUrl + "/admin/realms/" + realm + "/users";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        try {
+            // 1️⃣ Busca todos os usuários
+            ResponseEntity<List> response = restTemplate.exchange(
+                    urlUsuarios,
+                    HttpMethod.GET,
+                    request,
+                    List.class
+            );
+
+            List<Map<String, Object>> usuariosMap = response.getBody();
+            System.out.println("📋 Total de usuários encontrados: " + (usuariosMap != null ? usuariosMap.size() : 0));
+
+            // 2️⃣ Converte e adiciona roles para cada usuário
+            List<KeycloakUserDTO> usuarios = usuariosMap.stream().map(userMap -> {
+                KeycloakUserDTO dto = new KeycloakUserDTO();
+                dto.setId((String) userMap.get("id"));
+                dto.setUsername((String) userMap.get("username"));
+                dto.setEmail((String) userMap.get("email"));
+                dto.setFirstName((String) userMap.get("firstName"));
+                dto.setLastName((String) userMap.get("lastName"));
+                dto.setEnabled((Boolean) userMap.getOrDefault("enabled", true));
+
+                // 3️⃣ Busca as roles do usuário
+                try {
+                    String urlRoles = keycloakUrl + "/admin/realms/" + realm + "/users/" + dto.getId() + "/role-mappings/realm";
+                    ResponseEntity<List> rolesResponse = restTemplate.exchange(
+                            urlRoles,
+                            HttpMethod.GET,
+                            request,
+                            List.class
+                    );
+
+                    List<Map<String, Object>> rolesMap = rolesResponse.getBody();
+                    if (rolesMap != null) {
+                        List<String> nomesRoles = rolesMap.stream()
+                                .map(r -> (String) r.get("name"))
+                                .toList();
+                        dto.setRoles(nomesRoles);
+                    }
+                } catch (Exception e) {
+                    System.err.println("⚠️ Erro ao buscar roles do usuário " + dto.getUsername() + ": " + e.getMessage());
+                }
+
+                return dto;
+            }).toList();
+
+            return usuarios;
+
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Falha ao listar usuários: " + e.getResponseBodyAsString(), e);
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Erro inesperado ao listar usuários", e);
         }
@@ -135,7 +198,6 @@ public class KeycloakAdminServiceImpl {
 
         try {
             restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
-            System.out.println("✅ Usuário atualizado com sucesso no Keycloak! ID: " + id);
 
             // Se vier senha, atualiza também
             if (user.getPassword() != null && !user.getPassword().isBlank()) {
@@ -143,13 +205,8 @@ public class KeycloakAdminServiceImpl {
             }
 
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao atualizar usuário no Keycloak:");
-            System.err.println("Status: " + e.getStatusCode());
-            System.err.println("Headers: " + e.getResponseHeaders());
-            System.err.println("Body: " + e.getResponseBodyAsString());
             throw new RuntimeException("Falha ao atualizar usuário: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            System.err.println("⚠️ Erro inesperado ao atualizar usuário: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Erro inesperado ao atualizar usuário", e);
         }
@@ -174,32 +231,48 @@ public class KeycloakAdminServiceImpl {
             restTemplate.put(url, request);
             System.out.println("🔑 Senha do usuário atualizada com sucesso!");
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao atualizar senha no Keycloak: " + e.getResponseBodyAsString());
             throw new RuntimeException("Falha ao atualizar senha: " + e.getResponseBodyAsString(), e);
         }
     }
 
     public void excluirUsuario(String id) {
         String token = obterTokenAdmin();
-        String url = keycloakUrl + "/admin/realms/" + realm + "/users/" + id;
+        String urlUsuario = keycloakUrl + "/admin/realms/" + realm + "/users/" + id;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
-
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-            System.out.println("🗑️ Usuário excluído com sucesso do Keycloak! ID: " + id);
+            // Busca o usuário antes de excluir
+            ResponseEntity<Map> userResponse = restTemplate.exchange(urlUsuario, HttpMethod.GET, request, Map.class);
+            Map<String, Object> usuario = userResponse.getBody();
+            String username = (String) usuario.get("username");
+
+            if ("sibre-admin".equalsIgnoreCase(username)) {
+                throw new RuntimeException("❌ Não é permitido excluir o usuário administrativo principal (sibre-admin).");
+            }
+
+            // Busca roles do usuário
+            String urlRoles = keycloakUrl + "/admin/realms/" + realm + "/users/" + id + "/role-mappings/realm";
+            ResponseEntity<List> rolesResponse = restTemplate.exchange(urlRoles, HttpMethod.GET, request, List.class);
+            List<Map<String, Object>> roles = rolesResponse.getBody();
+
+            if (roles != null && roles.stream().anyMatch(r -> "admin".equalsIgnoreCase((String) r.get("name")))) {
+                // Verifica se é o único admin do sistema
+                long qtdAdmins = listarUsuariosComRoles().stream()
+                        .filter(u -> u.getRoles().contains("admin"))
+                        .count();
+
+                if (qtdAdmins <= 1) {
+                    throw new RuntimeException("⚠️ Não é possível excluir o único administrador do sistema.");
+                }
+            }
+
+            // Se passou por todas as verificações, pode excluir
+            restTemplate.exchange(urlUsuario, HttpMethod.DELETE, request, String.class);
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao excluir usuário no Keycloak:");
-            System.err.println("Status: " + e.getStatusCode());
-            System.err.println("Body: " + e.getResponseBodyAsString());
             throw new RuntimeException("Falha ao excluir usuário: " + e.getResponseBodyAsString(), e);
-        } catch (Exception e) {
-            System.err.println("⚠️ Erro inesperado ao excluir usuário: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Erro inesperado ao excluir usuário", e);
         }
     }
 
@@ -225,7 +298,6 @@ public class KeycloakAdminServiceImpl {
             }
             return token;
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Falha ao obter token administrativo: " + e.getResponseBodyAsString());
             throw e;
         }
     }

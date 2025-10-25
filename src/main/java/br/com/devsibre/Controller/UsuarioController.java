@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class UsuarioController {
 
@@ -36,10 +37,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> listarTodos() {
-        var usuarios = keycloakAdminService.listarUsuarios();
+    public ResponseEntity<List<KeycloakUserDTO>>  listarTodos() {
+        List<KeycloakUserDTO> usuarios = keycloakAdminService.listarUsuariosComRoles();
         return ResponseEntity.ok(usuarios);
     }
-
 }
 
