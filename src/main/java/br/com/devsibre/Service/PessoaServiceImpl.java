@@ -5,6 +5,7 @@ import br.com.devsibre.Domain.Entity.Pessoa;
 import br.com.devsibre.Domain.Repository.PessoaRepository;
 import br.com.devsibre.Service.Inteface.PessoaService;
 import br.com.devsibre.error.BusinessException;
+import br.com.devsibre.util.Mensagens;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public Pessoa buscarPorId(Long id) {
-        return pessoaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+        return pessoaRepository.findById(id).orElseThrow(() -> new BusinessException(Mensagens.pessoa.NAO_EXISTE));
     }
 
     @Override
@@ -42,7 +43,7 @@ public class PessoaServiceImpl implements PessoaService {
                 .anyMatch(par -> par.getPessoaRelacionada().getId().equals(p2.getId()));
 
         if (jaExiste) {
-            throw BusinessException.relacionamentoDuplicado();
+            throw new BusinessException(Mensagens.pessoa.RELACIONAMENTO_DUPLICADO);
         }
 
         Parentescos parentesco = new Parentescos(tipo, p1, p2);

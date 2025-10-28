@@ -2,6 +2,7 @@ package br.com.devsibre.Controller;
 
 import br.com.devsibre.Domain.Entity.Pessoa;
 import br.com.devsibre.Service.Inteface.PessoaService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class PessoaController {
     }
 
     @PostMapping
+    @RolesAllowed({"admin", "gestor"})
     public Pessoa salvar(@RequestBody Pessoa pessoa) {
         return pessoaService.salvar(pessoa);
     }
@@ -33,6 +35,7 @@ public class PessoaController {
     }
 
     @PostMapping("/{id1}/vinculo/{id2}")
+    @RolesAllowed({"admin", "gestor"})
     public Pessoa criarVinculo(@PathVariable Long id1,
                                @PathVariable Long id2,
                                @RequestParam String tipo) {
@@ -40,11 +43,13 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{id}")
+    @RolesAllowed({"admin", "gestor"})
     public void deletar(@PathVariable Long id) {
         pessoaService.deletar(id);
     }
 
     @PutMapping("/{id}")
+    @RolesAllowed({"admin", "gestor"})
     public Pessoa atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa) {
         Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoa);
         return pessoaAtualizada;
