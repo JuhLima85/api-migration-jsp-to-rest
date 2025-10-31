@@ -32,7 +32,7 @@ public final class Mensagens {
         public static final String SUCESSO_CRIAR = "Usuário criado com sucesso no Keycloak!";
         public static final String SUCESSO_ATUALIZAR = "Usuário atualizado com sucesso!";
         public static final String SUCESSO_EXCLUIR = "Usuário excluído com sucesso!";
-        public static final String SUCESSO_LISTAR = "Lista de usuários obtida com sucesso!";
+        public static final String CAMPO_VAZIO = "É obrigatório preencher todos os campos antes de cadastrar o usuário.";
     }
 
     // ==================================================

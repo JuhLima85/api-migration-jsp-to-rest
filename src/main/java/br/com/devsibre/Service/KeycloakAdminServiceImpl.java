@@ -11,7 +11,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -35,19 +34,19 @@ public class KeycloakAdminServiceImpl {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public void criarUsuario(KeycloakUserDTO user) {
+        if (user == null
+                || user.getUsername() == null || user.getUsername().isBlank()
+                || user.getPassword() == null || user.getPassword().isBlank()
+                || user.getEmail() == null || user.getEmail().isBlank()
+                || user.getFirstName() == null || user.getFirstName().isBlank()
+                || user.getLastName() == null || user.getLastName().isBlank()
+                || user.getRoles() == null || user.getRoles().isEmpty()) {
+            throw new BusinessException(Mensagens.Usuario.CAMPO_VAZIO);
+        }
+
         String token = obterTokenAdmin();
 
-        List<Map<String, Object>> usuarios = listarUsuarios();
-        boolean usernameJaExiste = usuarios.stream()
-                .anyMatch(u -> u.get("username").equals(user.getUsername()));
-        if (usernameJaExiste) {
-            throw new BusinessException(Mensagens.Usuario.USUARIO_DUPLICADO);
-        }
-
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            throw new IllegalArgumentException(Mensagens.Usuario.SEM_ROLE);
-        }
-
+        // 🧩 Cria o usuário no Keycloak
         Map<String, Object> userBody = Map.of(
                 "username", user.getUsername(),
                 "email", user.getEmail(),
@@ -69,14 +68,79 @@ public class KeycloakAdminServiceImpl {
         try {
             restTemplate.postForEntity(url, request, String.class);
         } catch (HttpClientErrorException e) {
-            System.err.println("❌ Erro ao criar usuário no Keycloak");
-            System.err.println("Status: " + e.getStatusCode());
-            System.err.println("Headers: " + e.getResponseHeaders());
-            System.err.println("Body: " + e.getResponseBodyAsString());
             if (e.getStatusCode() == HttpStatus.CONFLICT) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, Mensagens.Usuario.EMAIL_DUPLICADO);
+                throw new BusinessException(Mensagens.Usuario.USUARIO_DUPLICADO);
             }
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Mensagens.Usuario.FALHA_CRIAR + ": " + e.getResponseBodyAsString());
+            throw new BusinessException(Mensagens.Usuario.FALHA_CRIAR + ": " + e.getResponseBodyAsString());
+        }
+
+        // Busca o usuário recém-criado pelo username
+        String userId = buscarUserIdPorUsername(user.getUsername(), token);
+        if (userId == null) {
+            throw new BusinessException("Erro ao obter ID do usuário criado no Keycloak.");
+        }
+
+        // Busca a role diretamente da lista de roles do realm (sem endpoint restrito)
+        String roleName = user.getRoles().get(0); // Ex: "gestor"
+        Map<String, Object> role = buscarRoleCompleta(roleName, token);
+        if (role == null) {
+            throw new BusinessException("Role '" + roleName + "' não encontrada no Keycloak.");
+        }
+
+        // Atribui a role ao usuário
+        atribuirRoleAoUsuario(userId, role, token);
+    }
+
+    private Map<String, Object> buscarRoleCompleta(String roleName, String token) {
+        String url = keycloakUrl + "/admin/realms/" + realm + "/roles"; // lista todas as roles do realm
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        try {
+            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), List.class);
+            if (response.getBody() != null) {
+                for (Object item : response.getBody()) {
+                    Map<String, Object> role = (Map<String, Object>) item;
+                    if (roleName.equalsIgnoreCase((String) role.get("name"))) {
+                        return role; // retorna o objeto completo da role
+                    }
+                }
+            }
+        } catch (HttpClientErrorException e) {
+            System.err.println("⚠️ Erro ao listar roles do realm: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    // 🔎 Busca o ID do usuário pelo username
+    private String buscarUserIdPorUsername(String username, String token) {
+        String url = keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), List.class);
+        if (response.getBody() != null && !response.getBody().isEmpty()) {
+            Map<String, Object> user = (Map<String, Object>) response.getBody().get(0);
+            return (String) user.get("id");
+        }
+        return null;
+    }
+
+    private void atribuirRoleAoUsuario(String userId, Map<String, Object> role, String token) {
+        String url = keycloakUrl + "/admin/realms/" + realm + "/users/" + userId + "/role-mappings/realm";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // O Keycloak aceita "name" e (opcionalmente) "id"
+        HttpEntity<List<Map<String, Object>>> request = new HttpEntity<>(List.of(role), headers);
+
+        try {
+            restTemplate.postForEntity(url, request, String.class);
+        } catch (HttpClientErrorException e) {
+            System.err.println("⚠️ Erro ao atribuir role '" + role.get("name") + "' ao usuário ID " + userId);
+            System.err.println("➡️ Resposta: " + e.getResponseBodyAsString());
+            throw new BusinessException("Erro ao atribuir role '" + role.get("name") + "' ao usuário.");
         }
     }
 
