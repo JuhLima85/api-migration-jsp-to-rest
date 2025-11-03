@@ -46,23 +46,32 @@ services:
     networks:
       - app-network
 
+  # ⚠️ A API não está sendo executada via Docker neste momento.
+  # Para rodá-la em container, seria necessário subir também o frontend no mesmo ambiente,
+  # pois a autenticação com o Keycloak falha devido à diferença de origens (localhost vs container).
+  # Isso ocorre por causa das restrições de CORS e do isolamento de rede entre o host e o Docker.
   devsibre-api:
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: devsibre
+    image: devsibre-api
     container_name: devsibre-api
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: devsibre
+      DB_USERNAME: devsibre_user
+      DB_PASSWORD: devsibre_pass
+      KEYCLOAK_URL: http://keycloak-app:8080
+      KEYCLOAK_REALM: sibre
+      KEYCLOAK_CLIENT_ID: devsibre-admin-api
+      KEYCLOAK_CLIENT_SECRET: M2G1qggGOW1SLKTu2PMVLAwN6iEOxPRZ
+      KEYCLOAK_ISSUER_URI: http://keycloak-app:8080/realms/sibre
+      KEYCLOAK_JWKS_URI: http://keycloak-app:8080/realms/sibre/protocol/openid-connect/certs
     ports:
       - "8080:8080"
-      - "5005:5005"  # porta do debug remoto
-    environment:
-      - PROFILE=dev
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
-      - DB_HOST=mysql-db
-      - DB_PORT=3306
-      - DB_NAME=devsibre
-      - DB_USERNAME=devsibre_user
-      - DB_PASSWORD=devsibre_pass
+      - "5005:5005"
     depends_on:
       - mysql-db
       - keycloak

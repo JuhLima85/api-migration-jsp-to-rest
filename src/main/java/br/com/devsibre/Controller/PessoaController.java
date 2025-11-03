@@ -3,6 +3,7 @@ package br.com.devsibre.Controller;
 import br.com.devsibre.Domain.Entity.Pessoa;
 import br.com.devsibre.Service.Inteface.PessoaService;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class PessoaController {
     }
 
     @PostMapping
-    @RolesAllowed({"admin", "gestor"})
+    @PreAuthorize("hasRole('admin') or hasRole('gestor')")
     public Pessoa salvar(@RequestBody Pessoa pessoa) {
         return pessoaService.salvar(pessoa);
     }
