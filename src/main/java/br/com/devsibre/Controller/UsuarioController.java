@@ -12,7 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+        "http://localhost:4200",
+        "https://sibre-frontend-production.up.railway.app"
+})
 @RequiredArgsConstructor
 public class UsuarioController {
 

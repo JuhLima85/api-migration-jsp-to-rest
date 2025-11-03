@@ -10,7 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pessoas")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+        "http://localhost:4200",
+        "https://sibre-frontend-production.up.railway.app"
+})
 public class PessoaController {
 
     private final PessoaService pessoaService;

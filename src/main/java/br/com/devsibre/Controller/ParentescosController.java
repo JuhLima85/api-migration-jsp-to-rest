@@ -8,7 +8,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/parentescos")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+        "http://localhost:4200",
+        "https://sibre-frontend-production.up.railway.app"
+})
 public class ParentescosController {
 
      private final ParentescosService parentescosService;
