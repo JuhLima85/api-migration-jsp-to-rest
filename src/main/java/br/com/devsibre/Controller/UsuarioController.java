@@ -14,7 +14,8 @@ import java.util.List;
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = {
         "http://localhost:4200",
-        "https://sibre-frontend-production.up.railway.app"
+        "https://sibre-frontend-production.up.railway.app",
+        "https://sibre-adm.netlify.app"
 })
 @RequiredArgsConstructor
 public class UsuarioController {

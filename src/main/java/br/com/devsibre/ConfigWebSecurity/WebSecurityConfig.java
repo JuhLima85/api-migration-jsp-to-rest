@@ -100,8 +100,9 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         var cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(List.of(
-                "http://localhost:4200",                      // ambiente local
-                "https://sibre-frontend-production.up.railway.app" // frontend hospedado (ajuste conforme o seu domínio real)
+                "http://localhost:4200",
+                "https://sibre-frontend-production.up.railway.app",
+                "https://sibre-adm.netlify.app"
         ));
         cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization","Content-Type"));

@@ -10,7 +10,8 @@ import java.util.List;
 @RequestMapping("/parentescos")
 @CrossOrigin(origins = {
         "http://localhost:4200",
-        "https://sibre-frontend-production.up.railway.app"
+        "https://sibre-frontend-production.up.railway.app",
+        "https://sibre-adm.netlify.app"
 })
 public class ParentescosController {
 

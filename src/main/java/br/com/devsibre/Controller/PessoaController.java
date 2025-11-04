@@ -12,7 +12,8 @@ import java.util.List;
 @RequestMapping("/pessoas")
 @CrossOrigin(origins = {
         "http://localhost:4200",
-        "https://sibre-frontend-production.up.railway.app"
+        "https://sibre-frontend-production.up.railway.app",
+        "https://sibre-adm.netlify.app"
 })
 public class PessoaController {
 
