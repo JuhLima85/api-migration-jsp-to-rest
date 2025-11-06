@@ -47,14 +47,17 @@ public class KeycloakAdminServiceImpl {
 
         String token = obterTokenAdmin();
 
-        // 2️⃣ Criação do usuário (sem credentials)
-        Map<String, Object> userBody = new HashMap<>();
-        userBody.put("username", user.getUsername());
-        userBody.put("email", user.getEmail());
-        userBody.put("firstName", user.getFirstName());
-        userBody.put("lastName", user.getLastName());
-        userBody.put("enabled", true);
-        userBody.put("emailVerified", true); // ✅ evita bloqueio por e-mail não verificado
+        // Cria o usuário no Keycloak
+        Map<String, Object> userBody = Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "firstName", user.getFirstName(),
+                "lastName", user.getLastName(),
+                "enabled", true,
+                "credentials", new Object[]{
+                        Map.of("type", "password", "value", user.getPassword(), "temporary", false)
+                }
+        );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
@@ -78,23 +81,19 @@ public class KeycloakAdminServiceImpl {
             throw new BusinessException("Erro ao obter ID do usuário criado no Keycloak.");
         }
 
-        // 3️⃣ Define a senha (reset-password)
-        definirSenhaUsuario(userId, user.getPassword(), token);
-
-        // 5️⃣ Buscar e atribuir roles
-        for (String roleName : user.getRoles()) {
-            Map<String, Object> role = buscarRoleCompleta(roleName, token);
-            if (role == null) {
-                throw new BusinessException("Role '" + roleName + "' não encontrada no Keycloak.");
-            }
-            atribuirRoleAoUsuario(userId, role, token);
+        // Busca a role diretamente da lista de roles do realm (sem endpoint restrito)
+        String roleName = user.getRoles().get(0); // Ex: "gestor"
+        Map<String, Object> role = buscarRoleCompleta(roleName, token);
+        if (role == null) {
+            throw new BusinessException("Role '" + roleName + "' não encontrada no Keycloak.");
         }
 
-        System.out.println("✅ Usuário '" + user.getUsername() + "' criado com sucesso no Keycloak!");
+        // Atribui a role ao usuário
+        atribuirRoleAoUsuario(userId, role, token);
     }
 
     private Map<String, Object> buscarRoleCompleta(String roleName, String token) {
-        String url = keycloakUrl + "/admin/realms/" + realm + "/roles"; // lista todas as roles do realm
+        String url = keycloakUrl + "/admin/realms/" + realm + "/roles";
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
 
@@ -115,7 +114,7 @@ public class KeycloakAdminServiceImpl {
         return null;
     }
 
-    // 🔎 Busca o ID do usuário pelo username
+    // Busca o ID do usuário pelo username
     private String buscarUserIdPorUsername(String username, String token) {
         String url = keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username;
         HttpHeaders headers = new HttpHeaders();
@@ -143,46 +142,6 @@ public class KeycloakAdminServiceImpl {
             System.err.println("⚠️ Erro ao atribuir role '" + role.get("name") + "' ao usuário ID " + userId);
             System.err.println("➡️ Resposta: " + e.getResponseBodyAsString());
             throw new BusinessException("Erro ao atribuir role '" + role.get("name") + "' ao usuário.");
-        }
-    }
-
-    private void definirSenhaUsuario(String userId, String senha, String token) {
-        String url = keycloakUrl + "/admin/realms/" + realm + "/users/" + userId + "/reset-password";
-
-        Map<String, Object> credenciais = Map.of(
-                "type", "password",
-                "value", senha,
-                "temporary", false
-        );
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(credenciais, headers);
-
-        try {
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.PUT,
-                    request,
-                    Void.class
-            );
-
-            // ✅ Verificação explícita do status esperado
-            if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-                System.out.println("🔐 Senha definida com sucesso para o usuário ID " + userId);
-            } else {
-                System.err.println("⚠️ Resposta inesperada ao definir senha: " + response.getStatusCode());
-            }
-
-        } catch (HttpClientErrorException e) {
-            System.err.println("⚠️ Erro ao definir senha para o usuário ID " + userId);
-            System.err.println("➡️ Resposta: " + e.getResponseBodyAsString());
-            throw new BusinessException("Erro ao definir senha para o usuário.");
-        } catch (Exception ex) {
-            System.err.println("❌ Erro inesperado ao definir senha: " + ex.getMessage());
-            throw new BusinessException("Falha inesperada ao definir senha do usuário.");
         }
     }
 
